@@ -8,4 +8,4 @@ router.route('/auth/signin')
 router.route('/auth/signout')
   .get(authCtrl.signout)
 
-export default router
+module.exports= router

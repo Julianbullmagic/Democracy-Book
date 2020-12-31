@@ -33,4 +33,4 @@ router.route('/api/posts/:postId')
 router.param('userId', userCtrl.userByID)
 router.param('postId', postCtrl.postByID)
 
-export default router
+module.exports= router

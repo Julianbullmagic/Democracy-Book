@@ -193,7 +193,7 @@ const findPeople = async (req, res) => {
 }
 
 
-export default {
+module.exports= {
 
   create,
   userByID,

@@ -230,4 +230,4 @@ router.route('/update/:id').post((req, res) => {
 
 
 
-export default router
+module.exports= router

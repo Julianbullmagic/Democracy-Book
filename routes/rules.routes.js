@@ -73,4 +73,4 @@ router.get("/:ruleId", (req, res, next) => {
 
 
 
-export default router
+module.exports= router
