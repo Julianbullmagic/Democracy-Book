@@ -20,9 +20,9 @@ const Menu = withRouter(({history}) => (
         Democracy Book
       </Typography>
       <Link to="/">
-        <Iconbutton aria-label="Home" style={isActive(history, "/")}>
+        <IconButton aria-label="Home" style={isActive(history, "/")}>
           <HomeIcon/>
-        </Iconbutton>
+        </IconButton>
       </Link>
       {
         !auth.isAuthenticated() && (<span>
