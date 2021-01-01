@@ -10,7 +10,10 @@ const rule2Value = React.useRef('')
 const rule3Value = React.useRef('')
 const rule4Value = React.useRef('')
 const [toggle, setToggle] = useState(false);
-
+var uri="https://localhost:5000"
+if(process.env.NODE_ENV === 'production') {
+uri="https://democracybook.herokuapp.com"
+}
 
 
 function handleSubmit(e) {
