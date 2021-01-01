@@ -20,7 +20,7 @@ const Menu = withRouter(({history}) => (
         Democracy Book
       </Typography>
       <Link to="/">
-        <IconButton aria-label="Home" style={margin:"5px"} style={isActive(history, "/")}>
+        <IconButton aria-label="Home" style={{margin:"5px"}} style={isActive(history, "/")}>
           <HomeIcon/>
         </IconButton>
       </Link>
