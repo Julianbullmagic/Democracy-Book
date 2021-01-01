@@ -37,7 +37,7 @@ e.preventDefault()
             "Content-type": "application/json; charset=UTF-8"}}
 
 
-      fetch("https://democracybook.herokuapp.com/groups/add", options)
+      fetch(uri+"/groups/add", options)
               .then(response => response.json()).then(json => console.log(json));
 setToggle(!toggle)
 

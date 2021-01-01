@@ -41,7 +41,8 @@ const Menu = withRouter(({history}) => (
         auth.isAuthenticated() && (
           <span>
           <Link to={"/user/" + auth.isAuthenticated().user._id}>
-            <button>My Profile</button>
+            <button style={{marginLeft:"10px",
+            marginRight:"5px"}}>My Profile</button>
           </Link>
             <Link to={"/groups"}>
               <button>Groups</button>
