@@ -34,7 +34,7 @@ e.preventDefault()
             "Content-type": "application/json; charset=UTF-8"}}
 
 
-      fetch("http://localhost:3000/groups/add", options)
+      fetch("http://localhost:5000/groups/add", options)
               .then(response => response.json()).then(json => console.log(json));
 setToggle(!toggle)
 

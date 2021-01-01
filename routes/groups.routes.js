@@ -1,4 +1,4 @@
-import express from 'express'
+const express =require( 'express')
 const router = express.Router();
 const Rule = require("../models/rule.model");
 const Group = require("../models/group.model");
@@ -199,9 +199,7 @@ router.route('/join/:groupId/:userId').put((req, res) => {
   let userId = req.params.userId;
   let groupId = req.params.groupId;
 
-  console.log("userjoinid")
-  console.log(userId)
-  console.log(groupId)
+
   const updatedGroup=Group.findByIdAndUpdate(groupId, {$addToSet : {
   members:userId
 }}).exec()

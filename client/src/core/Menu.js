@@ -8,7 +8,7 @@ import auth from './../auth/auth-helper'
 import {Link, withRouter} from 'react-router-dom'
 
 const isActive = (history, path) => {
-  if (history.location.pathname == path)
+  if (history.location.pathname === path)
     return {color: '#ffa726'}
   else
     return {color: '#ffffff'}
@@ -37,7 +37,8 @@ const Menu = withRouter(({history}) => (
         </span>)
       }
       {
-        auth.isAuthenticated() && (<span>
+        auth.isAuthenticated() && (
+          <span>
           <Link to={"/user/" + auth.isAuthenticated().user._id}>
             <button style={{margin:"20"}}>My Profile</button>
           </Link>

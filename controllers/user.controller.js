@@ -1,11 +1,10 @@
-import User from '../models/user.model'
+const User = ('../models/user.model')
 const ExpertNominee = require("../models/nominee.model");
 
-import extend from 'lodash/extend'
-import errorHandler from './../helpers/dbErrorHandler'
-import formidable from 'formidable'
-import fs from 'fs'
-import profileImage from './../client/assets/images/profile-pic.png'
+const extend = require('lodash/extend')
+const errorHandler = require('./../helpers/dbErrorHandler')
+const formidable = require('formidable')
+const fs = require('fs')
 
 const create = async (req, res) => {
   const user = new User(req.body)

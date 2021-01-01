@@ -13,6 +13,9 @@ import Marketplace from './marketplace/Marketplace'
 import SingleGroupPage from './groups/SingleGroupPage'
 import Menu from './core/Menu'
 
+
+// Then you can use them like this
+// <Route exact path={ routeCodes.ABOUT } component={ About } />
 const MainRouter = () => {
     return (<div>
       <Menu/>
@@ -25,7 +28,7 @@ const MainRouter = () => {
         <Route exact path="/marketplace" component={Marketplace}/>
         <PrivateRoute path="/user/edit/:userId" component={EditProfile}/>
         <Route exact path="/user/:userId" component={Profile}/>
-        <Route exact path="/groups/:groupId" component={SingleGroupPage}/>
+        <Route exact path="/groups/:groupId"    component={SingleGroupPage}/>
 
       </Switch>
     </div>)

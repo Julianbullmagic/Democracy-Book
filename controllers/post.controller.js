@@ -1,7 +1,7 @@
-import Post from '../models/post.model'
-import errorHandler from './../helpers/dbErrorHandler'
-import formidable from 'formidable'
-import fs from 'fs'
+const Post =require( '../models/post.model')
+const errorHandler =require( './../helpers/dbErrorHandler')
+const formidable =require( 'formidable')
+const fs =require( 'fs')
 
 const create = (req, res, next) => {
   console.log("post req")

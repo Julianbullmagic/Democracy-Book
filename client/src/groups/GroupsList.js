@@ -12,16 +12,36 @@ class GroupsList extends Component {
            items: [],
            imageIndex:0
          }
-         fetch("http://localhost:3000/groups/findgroups").then(res => {
+         fetch("http://localhost:5000/groups/findgroups").then(res => {
            return res.json();
          }).then(blob => {
            this.setState({items: blob.data})
 
-        
+
          })
      }
 
+
+
   render() {
+
+    var groupsmapped=<h3>no groups</h3>
+
+if(this.state.items){groupsmapped=this.state.items.map(item => {
+
+
+      return(
+        <>
+        <div key={item._id}>
+<Link exact to={"groups/" + item._id}><h3>{item.name}</h3>
+            <div>
+             <h3>{item.title}</h3>
+            <p>{item.description}</p>
+            </div></Link>
+        </div>
+        </>
+      )
+    })}
 
     return (
       <React.Fragment>
@@ -30,21 +50,7 @@ class GroupsList extends Component {
         </header>
         <section>
           <div >
-          {this.state.items.map(item => {
-
-
-            return(
-              <>
-              <div key={item._id}>
- <Link exact to={"groups/" + item._id}><h3>{item.name}</h3>
-                  <div>
-                   <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                  </div></Link>
-              </div>
-              </>
-            )
-          })}
+          {groupsmapped}
           </div>
         </section>
 

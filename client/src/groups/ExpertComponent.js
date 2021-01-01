@@ -160,7 +160,7 @@ async function setExpertWinners(){
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-   await fetch("http://localhost:3000/experts/expertwinners/" + props.groupId, options)
+   await fetch("http://localhost:5000/experts/expertwinners/" + props.groupId, options)
               .then(response => response.json()).then(json => console.log(json))
 
 }
@@ -176,7 +176,7 @@ function clearCandidates(){
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-   fetch("http://localhost:3000/experts/clearcandidates/" + props.groupId, options)
+   fetch("http://localhost:5000/experts/clearcandidates/" + props.groupId, options)
               .then(response => response.json()).then(json => console.log(json))
 
 
@@ -193,7 +193,7 @@ if(emails.length>0){
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-   fetch("http://localhost:3000/experts/sendelectionnotification/"+ props.groupName +"/" + props.groupId, options)
+   fetch("http://localhost:5000/experts/sendelectionnotification/"+ props.groupName +"/" + props.groupId, options)
               .then(response => response.json()).then(json => console.log(json))
 
 
@@ -210,7 +210,7 @@ if(emails.length>0){
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-   fetch("http://localhost:3000/experts/sendelectionnotification2/"+ props.groupName +"/" + props.groupId, options)
+   fetch("http://localhost:5000/experts/sendelectionnotification2/"+ props.groupName +"/" + props.groupId, options)
               .then(response => response.json()).then(json => console.log(json))
 
 
@@ -226,7 +226,7 @@ if(emails.length>0){
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-   fetch("http://localhost:3000/experts/sendelectionnotification3/"+ props.groupName +"/" + props.groupId, options)
+   fetch("http://localhost:5000/experts/sendelectionnotification3/"+ props.groupName +"/" + props.groupId, options)
               .then(response => response.json()).then(json => console.log(json))
 
 
@@ -242,7 +242,7 @@ async function setTime(){
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-   await fetch("http://localhost:3000/experts/havingelection/" + props.groupId, options)
+   await fetch("http://localhost:5000/experts/havingelection/" + props.groupId, options)
               .then(response => response.json()).then(json => console.log(json))
 
 }
@@ -254,7 +254,7 @@ async function electionEnd(){
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-   await fetch("http://localhost:3000/experts/electionend/" + props.groupId, options)
+   await fetch("http://localhost:5000/experts/electionend/" + props.groupId, options)
               .then(response => response.json()).then(json => console.log(json))
 
 }
@@ -266,13 +266,13 @@ async function secondNotification(){
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-   await fetch("http://localhost:3000/experts/secondelectionnotification/" + props.groupId, options)
+   await fetch("http://localhost:5000/experts/secondelectionnotification/" + props.groupId, options)
               .then(response => response.json()).then(json => console.log(json))
 }
 
 async function checkTime(){
 var datenow=new Date
-   await fetch("http://localhost:3000/groups/checktime/" + props.groupId)
+   await fetch("http://localhost:5000/groups/checktime/" + props.groupId)
    .then(result => result.json())
    .then(response => {
        setTimer(response.electionstart)
@@ -300,7 +300,7 @@ function createCandidate(userId){
                     headers: {
                         "Content-type": "application/json; charset=UTF-8"}}
 
-                  await  fetch("http://localhost:3000/experts/addCandidate/", options)
+                  await  fetch("http://localhost:5000/experts/addCandidate/", options)
                             .then(response => response.json()).then(json => console.log(json))
                   await fetchCandidateData()
               }
@@ -315,7 +315,7 @@ function createCandidate(userId){
 
 
 function fetchCandidateData(){
-  fetch("http://localhost:3000/experts/findcandidates/"+props.groupId)
+  fetch("http://localhost:5000/experts/findcandidates/"+props.groupId)
       .then(result => result.json())
       .then(response => {
           setCandidates(response.data)
@@ -331,7 +331,7 @@ fetchMembers()
 }
 
 function fetchMembers(){
-   fetch("http://localhost:3000/experts/getmembers/"+props.groupId)
+   fetch("http://localhost:5000/experts/getmembers/"+props.groupId)
    .then(result => result.json())
    .then(response =>
        setMembers(response.data.members)
@@ -340,7 +340,7 @@ function fetchMembers(){
 
 async function fetchGroupData(){
 
-await fetch("http://localhost:3000/experts/getgroupdata/"+props.groupId)
+await fetch("http://localhost:5000/experts/getgroupdata/"+props.groupId)
 .then(result => result.json())
 .then(response =>
     setGroupData(response.data)
@@ -359,7 +359,7 @@ await fetch("http://localhost:3000/experts/getgroupdata/"+props.groupId)
               body: ''
          }
 
-        await fetch("http://localhost:3000/experts/approveofcandidate/" + id +"/"+ auth.isAuthenticated().user._id, options
+        await fetch("http://localhost:5000/experts/approveofcandidate/" + id +"/"+ auth.isAuthenticated().user._id, options
 ).then(res => {
     console.log(res);
   }).catch(err => {
@@ -385,7 +385,7 @@ console.log(id)
               body: ''
          }
 
-        await fetch("http://localhost:3000/experts/withdrawapprovalofcandidate/" + id +"/"+ auth.isAuthenticated().user._id, options
+        await fetch("http://localhost:5000/experts/withdrawapprovalofcandidate/" + id +"/"+ auth.isAuthenticated().user._id, options
 ) .then(res => {
     console.log(res);
   }).catch(err => {

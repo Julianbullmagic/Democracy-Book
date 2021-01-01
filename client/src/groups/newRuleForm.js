@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router';
+// import { Redirect } from 'react-router';
 import auth from './../auth/auth-helper'
 
 
@@ -7,36 +7,39 @@ import auth from './../auth/auth-helper'
 class NewRuleForm extends Component {
 
     constructor(props) {
-           super(props);
+           super(props)
+           console.log("props in new rule form")
+           console.log(props)
 
-           this.state = {
-             rule:props.rule,
-             groupId:props.groupId,
-             ruleId:props.ruleId,
-      newRule:'',
-      newRuleExplanation:'',
-      membersnum:props.members.length
-           }
-      
-           this.handleSubmit=this.handleSubmit.bind(this)
-           this.handleNewRuleChange=this.handleNewRuleChange.bind(this)
-           this.handleNewRuleExplanationChange=this.handleNewRuleExplanationChange.bind(this)
-           this.approve=this.approve.bind(this)
+  this.state = {
+    rule:props.rule,
+    groupId:props.groupId,
+    ruleId:props.rule.ruleId,
+newRule:'',
+newRuleExplanation:'',
+membersnum:props.members.length
+  }
+
+  this.handleSubmit=this.handleSubmit.bind(this)
+  this.handleNewRuleChange=this.handleNewRuleChange.bind(this)
+  this.handleNewRuleExplanationChange=this.handleNewRuleExplanationChange.bind(this)
+  this.approve=this.approve.bind(this)
 
 
 
-                         fetch("http://localhost:3000/rules/" + this.props.ruleId).then(res => {
-                           return res.json();
-                         }).then(blob => {
-                           this.setState({rule:blob})
-                         })
+                fetch("http://localhost:5000/rules/" + this.props.ruleId).then(res => {
+                  return res.json();
+                }).then(blob => {
+                  this.setState({rule:blob})
+                })
+
+
 }
 
 approve(e,suggestionId){
 
-  console.log("suggestion id")
-  console.log(suggestionId)
-  console.log(props.members)
+
+
   const options={
       method: "PUT",
       body: '',
@@ -44,10 +47,10 @@ approve(e,suggestionId){
           "Content-type": "application/json; charset=UTF-8"}}
 
 
-    fetch("http://localhost:3000/rules/approve/"+suggestionId+"/"+ auth.isAuthenticated().user._id, options)
+    fetch("http://localhost:5000/rules/approve/"+suggestionId+"/"+ auth.isAuthenticated().user._id, options)
             .then(response => response.json()).then(json => console.log(json))
 
-            fetch("http://localhost:3000/rules/" + this.props.ruleId).then(res => {
+            fetch("http://localhost:5000/rules/" + this.props.ruleId).then(res => {
               return res.json();
             }).then(blob => {
               this.setState({rule:blob})
@@ -82,10 +85,10 @@ handleSubmit(e){
 
 
 
-    fetch("http://localhost:3000/rules/addSuggestion/"+this.state.ruleId+"/"+ auth.isAuthenticated().user._id, options)
+    fetch("http://localhost:5000/rules/addSuggestion/"+this.state.ruleId+"/"+ auth.isAuthenticated().user._id, options)
               .then(response => response.json()).then(json => console.log(json));
 
-    fetch("http://localhost:3000/rules/" + this.state.ruleId).then(res => {
+    fetch("http://localhost:5000/rules/" + this.state.ruleId).then(res => {
                  return res.json();
               }).then(blob => {
                 this.setState({rule:blob})
@@ -106,10 +109,10 @@ var suggestionsmapped=this.state.rule.suggestions.map(item=>{
    upvotes=[...item.upvotes]
 
 }
-if(upvotes.length==0){
+if(upvotes.length===0){
   approval=<h5>{upvotes.length} members approve of this rule</h5>
 }
-if(upvotes.length==1){
+if(upvotes.length===1){
   approval=<h5>{upvotes.length} member approves of this rule</h5>
 }
 if(upvotes.length>1){

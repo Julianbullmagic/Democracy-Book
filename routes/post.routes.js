@@ -1,7 +1,7 @@
-import express from 'express'
-import userCtrl from '../controllers/user.controller'
-import authCtrl from '../controllers/auth.controller'
-import postCtrl from '../controllers/post.controller'
+const express =require( 'express')
+const userCtrl =require( '../controllers/user.controller')
+const authCtrl =require( '../controllers/auth.controller')
+const postCtrl =require( '../controllers/post.controller')
 
 const router = express.Router()
 

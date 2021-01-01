@@ -89,7 +89,7 @@ var expertids=props.experts.map(item=>{return item._id})
 console.log(expertids)
     if(props.experts){
 if(expertids.includes(auth.isAuthenticated().user._id)){
-    let groupId=null
+
     let postData = new FormData()
     postData.append('expert', true)
 
@@ -111,7 +111,7 @@ if(expertids.includes(auth.isAuthenticated().user._id)){
       }
     })}}
     else{
-    let groupId=null
+
     let postData = new FormData()
     postData.append('expert', true)
 

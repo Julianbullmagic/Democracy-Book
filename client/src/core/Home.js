@@ -43,6 +43,11 @@ export default function Home({history}){
   const classes = useStyles()
   const [defaultPage, setDefaultPage] = useState(false)
 
+  fetch("http://localhost:5000/groups/findgroups/").then(res => {
+    return res.json();
+  }).then(info=>{console.log(info)})
+
+
   useEffect(()=> {
     setDefaultPage(auth.isAuthenticated())
     const unlisten = history.listen (() => {

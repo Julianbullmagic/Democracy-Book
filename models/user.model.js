@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
-import crypto from 'crypto'
+const mongoose =require( 'mongoose')
+const crypto =require( 'crypto')
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -75,4 +75,4 @@ userSchema.methods = {
   }
 }
 
-export default mongoose.model('User', userSchema)
+module.exports= mongoose.model('User', userSchema)

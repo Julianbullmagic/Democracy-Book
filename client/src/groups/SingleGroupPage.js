@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router';
+// import { Redirect } from 'react-router';
 import auth from './../auth/auth-helper'
 import Newsfeed from './../post/Newsfeed'
 import NewRuleForm from './newRuleForm'
@@ -11,6 +11,8 @@ class SingleGroupPage extends Component {
 
     constructor(props) {
            super(props);
+           console.log("props in single group page")
+           console.log(props)
            this.state = {
              id:"",
              title: "",
@@ -21,7 +23,7 @@ class SingleGroupPage extends Component {
              updating:false
            }
 
-           fetch("http://localhost:3000/groups/" + this.props.match.params.groupId).then(res => {
+           fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
              return res.json();
            }).then(blob => {
              this.setState({id:this.props.match.params.groupId})
@@ -47,13 +49,13 @@ class SingleGroupPage extends Component {
               body: ''
          }
 
-         fetch("http://localhost:3000/groups/disapprove/" + id +"/"+ auth.isAuthenticated().user._id, options
+         fetch("http://localhost:5000/groups/disapprove/" + id +"/"+ auth.isAuthenticated().user._id, options
 ).then(res => {
     console.log(res);
   }).catch(err => {
     console.log(err);
   })
-  fetch("http://localhost:3000/groups/" + this.props.match.params.groupId).then(res => {
+  fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
     return res.json();
   }).then(blob => {
     this.setState({id:this.props.match.params.groupId})
@@ -65,7 +67,7 @@ class SingleGroupPage extends Component {
 }
 
 updateSuggestions(){
-  fetch("http://localhost:3000/groups/" + this.props.match.params.groupId).then(res => {
+  fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
     return res.json();
   }).then(blob => {
     this.setState({id:this.props.match.params.groupId})
@@ -88,13 +90,13 @@ updateSuggestions(){
               body: ''
          }
 
-         fetch("http://localhost:3000/groups/withdrawdisapproval/" + id +"/"+ auth.isAuthenticated().user._id, options
+         fetch("http://localhost:5000/groups/withdrawdisapproval/" + id +"/"+ auth.isAuthenticated().user._id, options
 ) .then(res => {
     console.log(res);
   }).catch(err => {
     console.log(err);
   })
-  fetch("http://localhost:3000/groups/" + this.props.match.params.groupId).then(res => {
+  fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
     return res.json();
   }).then(blob => {
     this.setState({id:this.props.match.params.groupId})
@@ -116,13 +118,13 @@ this.setState({members: blob.members});
               body: ''
          }
 
-         fetch("http://localhost:3000/groups/join/"+this.props.match.params.groupId+"/"+ auth.isAuthenticated().user._id, options
+         fetch("http://localhost:5000/groups/join/"+this.props.match.params.groupId+"/"+ auth.isAuthenticated().user._id, options
 )  .then(res => {
     console.log(res);
   }).catch(err => {
     console.log(err);
   })
-  fetch("http://localhost:3000/groups/" + this.props.match.params.groupId).then(res => {
+  fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
     return res.json();
   }).then(blob => {
     this.setState({id:this.props.match.params.groupId})
@@ -143,6 +145,36 @@ this.setState({members: blob.members});
 
   render() {
 
+    var rulescomponent=<h3>no rules</h3>
+    if (this.state.members&&this.props.match.params.groupId){
+      rulescomponent=this.state.rules.map(item => {
+
+        return(
+
+          <div key={item._id}>
+          <hr/>
+      <h3>{item.name}</h3>
+      <button onClick={(e)=>this.disapprove(e,item._id)}>Disapprove?</button>
+      <button onClick={(e)=>this.withdrawdisapproval(e,item._id)}>Withdraw Disapproval?</button>
+
+
+              <div>
+               <h4>{item.rule}</h4>
+           <h3>number of people who disapprove {item.disagree.length}</h3>
+           {(item.disagree.length/this.state.members.length)>=0.05?
+             <><p>Some group members are unhappy with this rule, perhaps you can suggest improvements</p>
+
+      <NewRuleForm rule={item} members={this.state.members} groupId={this.props.match.params.groupId}/></>
+             :<p>''</p>
+
+           }
+
+              </div>
+              <br/>
+          </div>
+        )
+      })}
+
 
     return (
       <React.Fragment>
@@ -161,32 +193,7 @@ this.setState({members: blob.members});
             <button onClick={(e)=>this.join(e)}>Join Group?</button>
 
             <p>Description: <strong> {this.state.description}</strong> </p>
-            <p>Group Rules: <strong>   {this.state.rules.map(item => {
-
-                return(
-
-                  <div key={item._id}>
-                  <hr/>
-              <h3>{item.name}</h3>
-              <button onClick={(e)=>this.disapprove(e,item._id)}>Disapprove?</button>
-              <button onClick={(e)=>this.withdrawdisapproval(e,item._id)}>Withdraw Disapproval?</button>
-
-
-                      <div>
-                       <h4>{item.rule}</h4>
-                   <h3>number of people who disapprove {item.disagree.length}</h3>
-                   {(item.disagree.length/this.state.members.length)>=0.05?
-                     <><p>Some group members are unhappy with this rule, perhaps you can suggest improvements</p>
-              <NewRuleForm ruleId={item._id} rule={item} members={this.state.members} groupId={this.props.match.params.groupId}/></>
-                     :<p>''</p>
-
-                   }
-
-                      </div>
-                      <br/>
-                  </div>
-                )
-              })}</strong></p>
+            <p>Group Rules: <strong>   {rulescomponent} </strong></p>
               {this.state.id&&<Newsfeed groupId={this.state.id}/>}
 
           </div>
