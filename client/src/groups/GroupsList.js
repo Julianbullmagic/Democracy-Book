@@ -19,14 +19,16 @@ console.log(process.env.NODE_ENV)
          this.setState({uri:"https://democracybook.herokuapp.com"})
          }
 
-         fetch(this.state.uri+"/groups/findgroups").then(res => {
-           return res.json();
-         }).then(blob => {
-           this.setState({items: blob.data})
 
-
-         })
      }
+
+     componentDidMount(){ fetch(this.state.uri+"/groups/findgroups").then(res => {
+        return res.json();
+      }).then(blob => {
+        this.setState({items: blob.data})
+
+
+      })}
 
 
 
