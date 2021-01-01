@@ -22,7 +22,7 @@ console.log(process.env.NODE_ENV)
 
      }
 
-     componentDidMount(){ fetch(this.state.uri+"/groups/findgroups").then(res => {
+     componentDidUpdate(){ fetch(this.state.uri+"/groups/findgroups").then(res => {
         return res.json();
       }).then(blob => {
         this.setState({items: blob.data})
