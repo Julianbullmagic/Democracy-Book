@@ -66,7 +66,7 @@ export default function Expertfeed (props) {
     return (
       <Card className={classes.card}>
         <Typography type="title" className={classes.title}>
-          Newsfeed
+          Expert Advice Feed
         </Typography>
         <Divider/>
         <NewPost addUpdate={addPost} groupId={props.groupId} experts={props.experts}/>

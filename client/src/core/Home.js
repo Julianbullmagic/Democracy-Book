@@ -92,7 +92,8 @@ export default function Home({history}){
                 have the expertise to understand. We aim to eliminate coercive and exploitative kinds of authority.
                 Authority should be given to the most ethical, wise, responsible and informed people rather than the most sociopathic or greedy.
                 We have elected expert leaders/advisers. This is not power in the common sense of the word, just people voluntarily
-                taking good advice or allowing experts to make decisions for them.</p>
+                taking good advice or allowing experts to make decisions for them. This site is constantly being refined and improved by it's members, all the source code is open  source and visible on 
+                Github. We welcome constructive criticism from people who believe a world without exploitation and oppression is possible.</p>
             <Grid item xs={8} sm={7}>
               <Newsfeed/>
             </Grid>
