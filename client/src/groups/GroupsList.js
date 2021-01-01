@@ -20,8 +20,9 @@ class GroupsList extends Component {
            imageIndex:0,
            uri:uri
          }
-
-         fetch(this.state.uri+"/groups/findgroups").then(res => {
+         console.log("state")
+console.log(this.state)
+         fetch(`${this.state.uri}/groups/findgroups`).then(res => {
             return res.json();
           }).then(blob => {
             this.setState({items: blob.data})
