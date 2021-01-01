@@ -9,14 +9,14 @@ import {Link, withRouter} from 'react-router-dom'
 
 const isActive = (history, path) => {
   if (history.location.pathname === path)
-    return {color: '#ffa726'}
+    return {color: 'white'}
   else
-    return {color: '#ffffff'}
+    return {color: 'white'}
 }
 const Menu = withRouter(({history}) => (
   <AppBar>
     <Toolbar>
-      <Typography variant="h6" color="inherit"style={{margin:"5px"}}>
+      <Typography variant="h6" color="inherit"style={{margin:"10px"}}>
         Democracy Book
       </Typography>
       <Link to="/">
@@ -26,7 +26,7 @@ const Menu = withRouter(({history}) => (
       </Link>
       {
         !auth.isAuthenticated() && (<span>
-          <Link to="/signup">
+          <Link className={btnfirst} to="/signup">
             <button>Sign up
             </button>
           </Link>
