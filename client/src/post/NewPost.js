@@ -67,11 +67,6 @@ export default function NewPost (props){
     groupId:''
   })
 
-console.log("experts in NewPost ")
-console.log(props.experts)
-
-
-
   const jwt = auth.isAuthenticated()
   useEffect(() => {
     setValues({...values,groupId:props.groupId, user: auth.isAuthenticated().user})
@@ -80,8 +75,7 @@ console.log(props.experts)
 
 
   const clickPost = () => {
-    console.log("experts in click post")
-console.log(props.experts)
+  
 console.log(auth.isAuthenticated().user)
 
 console.log(auth.isAuthenticated().user._id)

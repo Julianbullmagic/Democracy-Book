@@ -12,7 +12,7 @@ class ItemList extends Component {
            items: [],
            imageIndex:0
          }
-         fetch("http://localhost:3000/marketplace/").then(res => {
+         fetch("https://democracybook.herokuapp.com/marketplace/").then(res => {
            return res.json();
          }).then(blob => {
            this.setState({items: blob.data})

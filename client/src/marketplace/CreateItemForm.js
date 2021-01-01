@@ -30,7 +30,7 @@ function handleSubmit(e) {
             "Content-type": "application/json; charset=UTF-8"}}
 
 
-      fetch("http://localhost:3000/marketplace/add/"+ auth.isAuthenticated().user._id, options)
+      fetch("https://democracybook.herokuapp.com/marketplace/add/"+ auth.isAuthenticated().user._id, options)
               .then(response => response.json()).then(json => console.log(json));
 
 

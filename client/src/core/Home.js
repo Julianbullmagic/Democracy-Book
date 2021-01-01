@@ -43,7 +43,7 @@ export default function Home({history}){
   const classes = useStyles()
   const [defaultPage, setDefaultPage] = useState(false)
 
-  fetch("http://localhost:5000/groups/findgroups/").then(res => {
+  fetch("https://democracybook.herokuapp.com/groups/findgroups/").then(res => {
     return res.json();
   }).then(info=>{console.log(info)})
 

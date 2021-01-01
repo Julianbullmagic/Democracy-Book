@@ -8,8 +8,7 @@ class NewRuleForm extends Component {
 
     constructor(props) {
            super(props)
-           console.log("props in new rule form")
-           console.log(props)
+
 
   this.state = {
     rule:props.rule,
@@ -27,7 +26,7 @@ membersnum:props.members.length
 
 
 
-                fetch("http://localhost:5000/rules/" + this.props.ruleId).then(res => {
+                fetch("https://democracybook.herokuapp.com/rules/" + this.props.ruleId).then(res => {
                   return res.json();
                 }).then(blob => {
                   this.setState({rule:blob})
@@ -47,10 +46,10 @@ approve(e,suggestionId){
           "Content-type": "application/json; charset=UTF-8"}}
 
 
-    fetch("http://localhost:5000/rules/approve/"+suggestionId+"/"+ auth.isAuthenticated().user._id, options)
+    fetch("https://democracybook.herokuapp.com/rules/approve/"+suggestionId+"/"+ auth.isAuthenticated().user._id, options)
             .then(response => response.json()).then(json => console.log(json))
 
-            fetch("http://localhost:5000/rules/" + this.props.ruleId).then(res => {
+            fetch("https://democracybook.herokuapp.com/rules/" + this.props.ruleId).then(res => {
               return res.json();
             }).then(blob => {
               this.setState({rule:blob})
@@ -85,10 +84,10 @@ handleSubmit(e){
 
 
 
-    fetch("http://localhost:5000/rules/addSuggestion/"+this.state.ruleId+"/"+ auth.isAuthenticated().user._id, options)
+    fetch("https://democracybook.herokuapp.com/rules/addSuggestion/"+this.state.ruleId+"/"+ auth.isAuthenticated().user._id, options)
               .then(response => response.json()).then(json => console.log(json));
 
-    fetch("http://localhost:5000/rules/" + this.state.ruleId).then(res => {
+    fetch("https://democracybook.herokuapp.com/rules/" + this.state.ruleId).then(res => {
                  return res.json();
               }).then(blob => {
                 this.setState({rule:blob})

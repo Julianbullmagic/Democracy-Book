@@ -24,8 +24,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 export default function Newsfeed (props) {
-console.log("groupId in newsfeed")
-console.log(props.groupId)
+
   const classes = useStyles()
   const [posts, setPosts] = useState([])
   const jwt = auth.isAuthenticated()

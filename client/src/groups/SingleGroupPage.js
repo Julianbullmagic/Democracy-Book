@@ -11,8 +11,7 @@ class SingleGroupPage extends Component {
 
     constructor(props) {
            super(props);
-           console.log("props in single group page")
-           console.log(props)
+        
            this.state = {
              id:"",
              title: "",
@@ -23,7 +22,7 @@ class SingleGroupPage extends Component {
              updating:false
            }
 
-           fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
+           fetch("https://democracybook.herokuapp.com/groups/" + this.props.match.params.groupId).then(res => {
              return res.json();
            }).then(blob => {
              this.setState({id:this.props.match.params.groupId})
@@ -49,13 +48,13 @@ class SingleGroupPage extends Component {
               body: ''
          }
 
-         fetch("http://localhost:5000/groups/disapprove/" + id +"/"+ auth.isAuthenticated().user._id, options
+         fetch("https://democracybook.herokuapp.com/groups/disapprove/" + id +"/"+ auth.isAuthenticated().user._id, options
 ).then(res => {
     console.log(res);
   }).catch(err => {
     console.log(err);
   })
-  fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
+  fetch("https://democracybook.herokuapp.com/groups/" + this.props.match.params.groupId).then(res => {
     return res.json();
   }).then(blob => {
     this.setState({id:this.props.match.params.groupId})
@@ -67,7 +66,7 @@ class SingleGroupPage extends Component {
 }
 
 updateSuggestions(){
-  fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
+  fetch("https://democracybook.herokuapp.com/groups/" + this.props.match.params.groupId).then(res => {
     return res.json();
   }).then(blob => {
     this.setState({id:this.props.match.params.groupId})
@@ -90,13 +89,13 @@ updateSuggestions(){
               body: ''
          }
 
-         fetch("http://localhost:5000/groups/withdrawdisapproval/" + id +"/"+ auth.isAuthenticated().user._id, options
+         fetch("https://democracybook.herokuapp.com/groups/withdrawdisapproval/" + id +"/"+ auth.isAuthenticated().user._id, options
 ) .then(res => {
     console.log(res);
   }).catch(err => {
     console.log(err);
   })
-  fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
+  fetch("https://democracybook.herokuapp.com/groups/" + this.props.match.params.groupId).then(res => {
     return res.json();
   }).then(blob => {
     this.setState({id:this.props.match.params.groupId})
@@ -118,13 +117,13 @@ this.setState({members: blob.members});
               body: ''
          }
 
-         fetch("http://localhost:5000/groups/join/"+this.props.match.params.groupId+"/"+ auth.isAuthenticated().user._id, options
+         fetch("https://democracybook.herokuapp.com/groups/join/"+this.props.match.params.groupId+"/"+ auth.isAuthenticated().user._id, options
 )  .then(res => {
     console.log(res);
   }).catch(err => {
     console.log(err);
   })
-  fetch("http://localhost:5000/groups/" + this.props.match.params.groupId).then(res => {
+  fetch("https://democracybook.herokuapp.com/groups/" + this.props.match.params.groupId).then(res => {
     return res.json();
   }).then(blob => {
     this.setState({id:this.props.match.params.groupId})

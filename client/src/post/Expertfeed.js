@@ -24,8 +24,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 export default function Expertfeed (props) {
-console.log("experts in experts feed")
-console.log(props.experts)
+
   const classes = useStyles()
   const [posts, setPosts] = useState([])
   const jwt = auth.isAuthenticated()
