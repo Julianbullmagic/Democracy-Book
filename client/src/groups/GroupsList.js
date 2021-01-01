@@ -12,7 +12,7 @@ class GroupsList extends Component {
            items: [],
            imageIndex:0
          }
-         fetch("http://localhost:5000/groups/findgroups").then(res => {
+         fetch("https://democracybook.herokuapp.com/groups/findgroups").then(res => {
            return res.json();
          }).then(blob => {
            this.setState({items: blob.data})
