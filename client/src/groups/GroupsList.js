@@ -8,27 +8,30 @@ class GroupsList extends Component {
 
   constructor(props) {
          super(props);
+         var uri
+         if(process.env.NODE_ENV === 'production') {
+        uri="https://democracybook.herokuapp.com"
+       }else{
+         uri="https://localhost:5000"
+       }
+
          this.state = {
            items: [],
            imageIndex:0,
-           uri:"https://localhost:5000"
+           uri:uri
          }
-         console.log("NODE_ENV")
-console.log(process.env.NODE_ENV)
-         if(process.env.NODE_ENV === 'production') {
-         this.setState({uri:"https://democracybook.herokuapp.com"})
-         }
+
+         fetch(this.state.uri+"/groups/findgroups").then(res => {
+            return res.json();
+          }).then(blob => {
+            this.setState({items: blob.data})
+
+
+          })
 
 
      }
 
-     componentDidUpdate(){ fetch(this.state.uri+"/groups/findgroups").then(res => {
-        return res.json();
-      }).then(blob => {
-        this.setState({items: blob.data})
-
-
-      })}
 
 
 
