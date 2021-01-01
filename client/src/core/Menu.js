@@ -26,7 +26,8 @@ const Menu = withRouter(({history}) => (
       </Link>
       {
         !auth.isAuthenticated() && (<span>
-          <Link className={btnfirst} to="/signup">
+          <Link style={{marginLeft:"10px";
+          marginRight:"5px";}} to="/signup">
             <button>Sign up
             </button>
           </Link>

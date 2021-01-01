@@ -75,7 +75,7 @@ export default function NewPost (props){
 
 
   const clickPost = () => {
-  
+
 console.log(auth.isAuthenticated().user)
 
 console.log(auth.isAuthenticated().user._id)
@@ -170,7 +170,7 @@ if (props.groupId!==undefined){
         }
       </CardContent>
       <CardActions>
-        <Button color="primary" variant="contained" disabled={values.text === ''} onClick={clickPost} className={classes.submit}>POST</Button>
+        <Button color="primary" variant="contained" disabled={values.text === ''} onClick={clickPost} style={{color:"white"}} className={classes.submit}>POST</Button>
       </CardActions>
     </Card>
   </div>)
