@@ -16,11 +16,11 @@ const isActive = (history, path) => {
 const Menu = withRouter(({history}) => (
   <AppBar>
     <Toolbar>
-      <Typography variant="h6" color="inherit">
+      <Typography variant="h6" color="inherit"style={{margin:"5px"}}>
         Democracy Book
       </Typography>
       <Link to="/">
-        <IconButton aria-label="Home" style={{margin:"5px"}} style={isActive(history, "/")}>
+        <IconButton aria-label="Home"  style={isActive(history, "/")}>
           <HomeIcon/>
         </IconButton>
       </Link>
