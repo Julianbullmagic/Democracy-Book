@@ -13,7 +13,8 @@ class GroupsList extends Component {
            imageIndex:0,
            uri:"https://localhost:5000"
          }
-
+         console.log("NODE_ENV")
+console.log(process.env.NODE_ENV)
          if(process.env.NODE_ENV === 'production') {
          this.setState({uri:"https://democracybook.herokuapp.com"})
          }
