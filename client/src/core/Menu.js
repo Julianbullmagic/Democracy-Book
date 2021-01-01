@@ -20,18 +20,18 @@ const Menu = withRouter(({history}) => (
         Democracy Book
       </Typography>
       <Link to="/">
-        <IconButton aria-label="Home" style={isActive(history, "/")}>
+        <IconButton aria-label="Home" style={margin:"5px"} style={isActive(history, "/")}>
           <HomeIcon/>
         </IconButton>
       </Link>
       {
         !auth.isAuthenticated() && (<span>
           <Link to="/signup">
-            <button style={{margin:"20"}}>Sign up
+            <button>Sign up
             </button>
           </Link>
           <Link to="/signin">
-            <button style={{margin:"20"}}>Sign In
+            <button >Sign In
             </button>
           </Link>
         </span>)
@@ -40,15 +40,15 @@ const Menu = withRouter(({history}) => (
         auth.isAuthenticated() && (
           <span>
           <Link to={"/user/" + auth.isAuthenticated().user._id}>
-            <button style={{margin:"20"}}>My Profile</button>
+            <button>My Profile</button>
           </Link>
             <Link to={"/groups"}>
-              <button style={{margin:"20"}}>Groups</button>
+              <button>Groups</button>
             </Link>
             <Link to={"/marketplace"}>
-              <button style={{margin:"20"}}>Marketplace</button>
+              <button>Marketplace</button>
             </Link>
-          <button style={{margin:"20"}} color="inherit" onClick={() => {
+          <button color="inherit" onClick={() => {
               auth.clearJWT(() => history.push('/'))
             }}>Sign out</button>
 
