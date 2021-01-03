@@ -35,10 +35,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     width: 300
   },
-  submit: {
-    margin: 'auto',
-    marginBottom: theme.spacing(2)
-  }
+
 }))
 
 export default function Signup (){
@@ -86,7 +83,7 @@ export default function Signup (){
           }
         </CardContent>
         <CardActions>
-          <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>Submit</Button>
+        <button onClick={clickSubmit}>Submit</button>
         </CardActions>
       </Card>
       <Dialog open={values.open} disableBackdropClick={true}>

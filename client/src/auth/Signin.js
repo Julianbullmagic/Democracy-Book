@@ -93,7 +93,7 @@ export default function Signin(props) {
           }
         </CardContent>
         <CardActions>
-          <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>Submit</Button>
+          <button onClick={clickSubmit} >Submit</button>
         </CardActions>
       </Card>
     )
