@@ -73,7 +73,7 @@ export default function Home({history}){
                 <Typography variant="body2" component="p" className={classes.credit} color="textSecondary">Photo by <a href="https://unsplash.com/@boudewijn_huysmans" target="_blank" rel="noopener noreferrer">Boudewijn Huysmans</a> on Unsplash</Typography>
                 <CardContent>
                   <Typography type="body1" component="p">
-                    Welcome to Democracy Book
+                    Welcome
 
                   </Typography>
                 </CardContent>
@@ -83,18 +83,9 @@ export default function Home({history}){
         }
         {defaultPage &&
           <Grid container spacing={8}>
-          <br/>
-          <br/>
-          <br/>
-          <br/>
-          <p style={{"margin":"20px","padding":"20px"}}>   Welcome to Democracy Book, the social network where your thoughts and opinions really matter.
-                You should be involved in making decisions about things if it is relevant to you or if you
-                have the expertise to understand. We aim to eliminate coercive and exploitative kinds of authority.
-                Authority should be given to the most ethical, wise, responsible and informed people rather than the most sociopathic or greedy.
-                We have elected expert leaders/advisers. This should not be power in the common sense of the word, but rather people voluntarily
-                taking good advice or allowing trustworty experts to make decisions for them. Power, in the sense of being able to impose one's will onto others,
-                is always illegitimate. This site is constantly being refined and improved by it's members, all the source code is open  source and visible on
-                Github. We welcome constructive criticism from people who believe a world without exploitation and oppression is possible. Cynicism and prejudice are not welcome here.</p>
+
+
+
             <Grid item xs={8} sm={7}>
               <Newsfeed/>
             </Grid>
