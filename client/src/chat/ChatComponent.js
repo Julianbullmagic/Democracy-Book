@@ -48,6 +48,7 @@ class ChatComponent extends Component {
          return res.json();
        }).then(info=>{
          console.log(info)
+         this.setState({group:info})
        })
      }
 
@@ -57,6 +58,8 @@ class ChatComponent extends Component {
     console.log("groups in chat")
 console.log(this.state.groups)
 console.log(this.state.chosengroup)
+console.log(this.state.group)
+
 
 var mappedgroups=  <option value="no groups">no groups</option>
 if(this.state.groups){
