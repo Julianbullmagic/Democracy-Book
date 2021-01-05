@@ -23,7 +23,7 @@ class ChatComponent extends Component {
            uri:uri
          }
 
-         fetch(`${this.state.uri}/groups/findgroups`).then(res => {
+         fetch(`/groups/findgroups`).then(res => {
            return res.json();
          }).then(info=>{
            console.log(info.data)

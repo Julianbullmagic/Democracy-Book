@@ -22,7 +22,7 @@ class GroupsList extends Component {
          }
          console.log("state")
 console.log(this.state)
-         fetch(`${this.state.uri}/groups/findgroups`).then(res => {
+         fetch(`/groups/findgroups`).then(res => {
             return res.json();
           }).then(blob => {
             this.setState({items: blob.data})
