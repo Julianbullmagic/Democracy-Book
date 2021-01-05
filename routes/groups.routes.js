@@ -109,6 +109,8 @@ console.log(newRule1)
      description: req.body["description"],
      rules: [newRule1._id,newRule2._id,newRule3._id,newRule4._id],
    });
+   console.log("new group")
+console.log(newGroup)
 
 
    newGroup.save((err) => {
@@ -119,7 +121,7 @@ console.log(newRule1)
       })
      }else{
        res.status(201).json({
-         message: "Item was saved successfully"
+         message: "Group was saved successfully"
       })
      }
    })
