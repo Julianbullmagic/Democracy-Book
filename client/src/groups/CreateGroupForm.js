@@ -37,7 +37,7 @@ e.preventDefault()
             "Content-type": "application/json; charset=UTF-8"}}
 
 
-      fetch(uri+"/groups/add", options)
+      fetch("/groups/add", options)
               .then(response => response.json()).then(json => console.log(json));
 setToggle(!toggle)
 
