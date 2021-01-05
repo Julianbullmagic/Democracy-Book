@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid'
 import auth from './../auth/auth-helper'
 import FindPeople from './../user/FindPeople'
 import Newsfeed from './../post/Newsfeed'
+import ChatComponent from './../chat/ChatComponent'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -94,6 +95,7 @@ export default function Home({history}){
             </Grid>
           </Grid>
         }
+        <ChatComponent/>
       </div>
     )
 }
