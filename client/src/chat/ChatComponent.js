@@ -5,16 +5,25 @@ import auth from './../auth/auth-helper'
 
 class ChatComponent extends Component {
 
+
+
 //auth.isAuthenticated().user._id
   constructor(props) {
          super(props);
+         var uri
+         if(process.env.NODE_ENV === 'production') {
+        uri="https://democracybook.herokuapp.com"
+        }else{
+         uri="https://localhost:5000"
+        }
          this.state = {
            groups:[],
            chosengroup:'',
-           group:{}
+           group:{},
+           uri:uri
          }
 
-         fetch("https://democracybook.herokuapp.com/groups/findgroups/").then(res => {
+         fetch(`${this.state.uri}/groups/findgroups`).then(res => {
            return res.json();
          }).then(info=>{
            console.log(info.data)
