@@ -41,10 +41,6 @@ console.log(newRule1)
          message: "The Item was not saved",
          errorMessage : err.message
       })
-     }else{
-       res.status(201).json({
-         message: "Item was saved successfully"
-      })
      }
    })
    let newRule2= new Rule({
@@ -58,10 +54,6 @@ console.log(newRule1)
        res.status(400).json({
          message: "The Item was not saved",
          errorMessage : err.message
-      })
-     }else{
-       res.status(201).json({
-         message: "Item was saved successfully"
       })
      }
    })
@@ -77,10 +69,6 @@ console.log(newRule1)
          message: "The Item was not saved",
          errorMessage : err.message
       })
-     }else{
-       res.status(201).json({
-         message: "Item was saved successfully"
-      })
      }
    })
    let newRule4= new Rule({
@@ -94,10 +82,6 @@ console.log(newRule1)
        res.status(400).json({
          message: "The Item was not saved",
          errorMessage : err.message
-      })
-     }else{
-       res.status(201).json({
-         message: "Item was saved successfully"
       })
      }
    })
