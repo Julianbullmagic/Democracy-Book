@@ -1,6 +1,3 @@
-
-
-
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -15,6 +12,9 @@ const groupsRoutes = require( './routes/groups.routes')
 const rulesRoutes = require( './routes/rules.routes')
 const expertRoutes = require( './routes/expert.routes')
 const marketplaceRoutes = require( './routes/marketplace.routes')
+const http = require('http');
+const socketio = require('socket.io');
+const formatMessage = require('./utils/messages');
 
 //comment out before building for production
 const PORT = process.env.PORT || 5000
@@ -41,6 +41,61 @@ app.use('/groups', groupsRoutes)
 app.use('/rules', rulesRoutes)
 app.use('/experts', expertRoutes)
 app.use('/marketplace', marketplaceRoutes)
+
+
+const botName = 'Chat Bot';
+
+// Run when client connects
+io.on('connection', socket => {
+  socket.on('joinRoom', ({ username, room }) => {
+    const user = userJoin(socket.id, username, room);
+
+    socket.join(user.room);
+
+    // Welcome current user
+    socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
+
+    // Broadcast when a user connects
+    socket.broadcast
+      .to(user.room)
+      .emit(
+        'message',
+        formatMessage(botName, `${user.username} has joined the chat`)
+      );
+
+    // Send users and room info
+    io.to(user.room).emit('roomUsers', {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    });
+  });
+
+  // Listen for chatMessage
+  socket.on('chatMessage', msg => {
+    const user = getCurrentUser(socket.id);
+
+    io.to(user.room).emit('message', formatMessage(user.username, msg));
+  });
+
+  // Runs when client disconnects
+  socket.on('disconnect', () => {
+    const user = userLeave(socket.id);
+
+    if (user) {
+      io.to(user.room).emit(
+        'message',
+        formatMessage(botName, `${user.username} has left the chat`)
+      );
+
+      // Send users and room info
+      io.to(user.room).emit('roomUsers', {
+        room: user.room,
+        users: getRoomUsers(user.room)
+      });
+    }
+  });
+});
+
 
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'))

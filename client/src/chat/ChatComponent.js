@@ -7,7 +7,7 @@ class ChatComponent extends Component {
 
 
 
-//auth.isAuthenticated().user._id
+
   constructor(props) {
          super(props);
          var uri
@@ -20,8 +20,10 @@ class ChatComponent extends Component {
            groups:[],
            chosengroup:'',
            group:{},
-           uri:uri
+           uri:uri,
+           newmessage:''
          }
+         socket = io("https://democracybook.herokuapp.com")
 
          fetch(`/groups/findgroups`).then(res => {
            return res.json();
@@ -32,8 +34,84 @@ class ChatComponent extends Component {
 
          this.handleSubmit=this.handleSubmit.bind(this)
          this.handleGroupChange=this.handleGroupChange.bind(this)
-
+         this.sendMessage=this.sendMessage.bind(this)
+         this.setGroup=this.setGroup.bind(this)
+         this.outputUsers=this.outputUsers.bind(this)
+         this.outputMessage=this.outputMessage.bind(this)
+         this.outputRoomName=this.outputRoomName.bind(this)
      }
+
+
+
+
+     // Get room and users
+     socket.on('roomUsers', ({ room, users }) => {
+       outputRoomName(room);
+       outputUsers(users);
+     });
+
+     // Message from server
+     socket.on('message', message => {
+       console.log(message);
+       outputMessage(message);
+
+       // Scroll down
+       chatMessages.scrollTop = chatMessages.scrollHeight;
+     });
+
+     // Message submit
+     chatForm.addEventListener('submit', e => {
+       e.preventDefault();
+
+       // Get message text
+       let msg = e.target.elements.msg.value;
+
+       msg = msg.trim();
+
+       if (!msg){
+         return false;
+       }
+
+       // Emit message to server
+       socket.emit('chatMessage', msg);
+
+       // Clear input
+       e.target.elements.msg.value = '';
+       e.target.elements.msg.focus();
+     });
+
+     // Output message to DOM
+    outputMessage(message) {
+       const div = document.createElement('div');
+       div.classList.add('message');
+       const p = document.createElement('p');
+       p.classList.add('meta');
+       p.innerText = message.username;
+       p.innerHTML += `<span>${message.time}</span>`;
+       div.appendChild(p);
+       const para = document.createElement('p');
+       para.classList.add('text');
+       para.innerText = message.text;
+       div.appendChild(para);
+       document.querySelector('.chat-messages').appendChild(div);
+     }
+
+     // Add room name to DOM
+    outputRoomName(room) {
+       roomName.innerText = room;
+     }
+
+     // Add users to DOM
+    outputUsers(users) {
+       userList.innerHTML = '';
+       users.forEach(user=>{
+         const li = document.createElement('li');
+         li.innerText = user.username;
+         userList.appendChild(li);
+       });
+      }
+
+
 
 
      handleGroupChange(event){
@@ -42,14 +120,20 @@ class ChatComponent extends Component {
 
      }
 
-     handleSubmit(e){
+     handleMessageChange(event){
+       this.setState({newmessage: event.target.value });
+       console.log(this.state.newmessage)
+
+     }
+     sendMessage(e){
+    socket.emit('message', { auth.isAuthenticated().user.name, this.state.newmessage })
+    this.setState({newmessage: ''})
+     }
+
+     setGroup(e){
        e.preventDefault()
-       fetch("https://democracybook.herokuapp.com/groups/"+this.state.chosengroup).then(res => {
-         return res.json();
-       }).then(info=>{
-         console.log(info)
-         this.setState({group:info})
-       })
+       socket.emit('joinRoom', { auth.isAuthenticated().user.name, this.state.chosengroup});
+
      }
 
 
@@ -65,7 +149,7 @@ var mappedgroups=  <option value="no groups">no groups</option>
 if(this.state.groups){
   mappedgroups=this.state.groups.map(group=>{
     return(
-        <option value={group._id}>{group.title}</option>
+        <option value={group.title}>{group.title}</option>
     )
   })
 }
@@ -77,7 +161,7 @@ if(this.state.groups){
           <h1><i className="fas fa-smile"></i> ChatCord</h1>
         </header>
         <main className="join-main">
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.setGroup}>
             <div className="form-control">
               <label htmlFor="room">Room</label>
               <select name="room" id="room"   onChange={this.handleGroupChange}>
@@ -86,8 +170,6 @@ if(this.state.groups){
             </div>
             <button type="submit" className="btn">Join Chat</button>
           </form>
-          <br/>
-          <a href="index.html" className="btn">Leave Room</a>
           <br/>
           <br/>
             <main className="chat-main">
@@ -107,8 +189,9 @@ if(this.state.groups){
                   placeholder="Enter Message"
                   required
                   autocomplete="off"
+                  onChange={this.handleMessageChange}
                 />
-                <button className="btn"><i className="fas fa-paper-plane"></i> Send</button>
+                <button onClick={this.sendMessage} className="btn"><i className="fas fa-paper-plane"></i> Send</button>
               </form>
             </div>
 
