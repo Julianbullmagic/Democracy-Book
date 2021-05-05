@@ -1,0 +1,26 @@
+button{
+    background: linear-gradient(135deg, #b721ff, #21d4fd);
+		border-radius:10px;
+		padding:5px;
+    color:white;
+    margin:5px;
+}
+body{
+  background:white;
+  display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+p{
+  color:#009688;
+}
+
+
+button:hover{
+	    background: #7A6AFE;
+			border-radius:10px;
+      color:white;
+			padding:5px;
+      margin:5px;
+}
