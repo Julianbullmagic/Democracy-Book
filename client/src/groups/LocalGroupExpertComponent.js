@@ -14,7 +14,6 @@ const [toggleViewCandidates, setToggleViewCandidates] = useState(false);
 const [members,setMembers]=useState([...props.members])
 const [groupId,setGroupId]=useState(props.groupId)
 
-console.log("groupdat",groupData,leaders,candidates)
 
 
 
@@ -168,14 +167,15 @@ console.log(err);
 
 
 function fetchGroupData(){
-console.log(props.groupId)
+console.log("fetching group data",groupData)
 fetch("populatemembersbelow/"+props.groupId)
 .then(result => {return result.json()})
 .then(response =>{
-    console.log("response.data",response['data'][0])
+    console.log("response.data",response['data'])
+    setGroupData(response['data'][0])
     if(response['data'][0]['expertcandidates']){
     setCandidates(response['data'][0]['expertcandidates'])}
-    if(response['data'][0]['leaders']){
+    if(response['data'][0]['expertcandidates']){
     console.log("response.data.leaders",response['data'][0]['leaders'])
     setLeaders(response['data'][0]['leaders'])}
 checkWinner()
@@ -303,22 +303,20 @@ console.log(err);
 
 
       function nominate(e,nomineeId,nomineeName,nomineeexpertise){
+console.log("nominee name",nomineeName)
 
-
-  const newCandidate= {
+  var newCandidate= {
     name: nomineeName,
     expertise:nomineeexpertise,
     timecreated:new Date().getTime(),
     votes:[auth.isAuthenticated().user._id]
   }
 
-  var groupDataClone=JSON.parse(JSON.stringify(groupData))
 
-  console.log("expert candidates !!",groupDataClone,groupDataClone.expertcandidates)
-  var justnames=[]
-if(groupDataClone.expertcandidates){
-justnames=groupDataClone.expertcandidates.map(item=>{return item.name})}
 
+
+  var justnames=candidates.map(item=>{return item.name})
+console.log("candidates",candidates,justnames)
 
 if(!justnames.includes(newCandidate.name)){
   const options = {
@@ -332,11 +330,15 @@ if(!justnames.includes(newCandidate.name)){
   fetch("nominatecandidate/" + nomineeId + "/" +groupId, options
   ).then(res => res.json())
   .then(res => {
-  newCandidate._id=res.id
-  var groupDataCopy=JSON.parse(JSON.stringify(groupData[0]))
+  newCandidate=res.newcandidate
+  console.log("new candidates",newCandidate)
+  var groupDataCopy=JSON.parse(JSON.stringify(groupData))
   console.log(groupDataCopy)
   groupDataCopy.expertcandidates.push(newCandidate)
+
+  console.log("groupDataCopy with new candidate",groupDataCopy)
   setGroupData(groupDataCopy)
+  setCandidates(groupDataCopy.expertcandidates)
   addNomineeToGroupObject(res.id)
   }).catch(err => {
   console.log(err);
@@ -508,7 +510,8 @@ var membersmapped=<h3>No Members</h3>
     impose your will onto others, is never legitimate. Authority should be grounded in knowledge, wisdom and moral integrity,
     not coercive force. Also, being removed from leadership does not necessarily reflect poorly on you as a person or your
     overall character, your life circumstances may restrit your ability to perform the job effectively. It may not be your
-    fault, but the group still needs to have the most capable leaders </h3>
+    fault, but the group still needs to have the most capable leaders. We think you are smart enough to understand the common
+    sense idea that experts often have valuable advice for us that we should take voluntarily. </h3>
 
 
 <button onClick={(e)=>toggleNominationsFunction(e)}>Nominate a member for leadership</button>

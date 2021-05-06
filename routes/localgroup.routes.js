@@ -119,7 +119,7 @@ router.post("/nominatecandidate/:nomineeId/:groupId", (req, res, next) => {
        console.log("candidate ID",candidate._id)
        res.status(201).json({
          message: "Item was saved successfully",
-         id:candidate._id
+         newcandidate:candidate
       })
      }
    })
