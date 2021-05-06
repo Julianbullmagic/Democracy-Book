@@ -94,19 +94,18 @@ router.delete("/removecandidate/:nomineeId", (req, res, next) => {
 });
 })
 
-router.post("/nominatecandidate/:nomineeId/:groupId", (req, res, next) => {
-  let groupId = req.params.groupId
-  let nomineeId = req.params.nomineeId
+router.post("/nominatecandidate/", (req, res, next) => {
 
    let newCandidate= new ExpertCandidate({
-     _id:new mongoose.Types.ObjectId(),
+     _id:req.body._id,
      name:req.body.name,
+     expertise:req.body.expertise,
      timecreated:req.body.timecreated,
-     userId:nomineeId,
-     groupId:groupId,
+     userId:req.body.nomineeId,
+     groupId:req.body.groupId,
      votes:[...req.body.votes]
       })
-   console.log(newCandidate)
+   console.log("new candidate",newCandidate)
 
 
    newCandidate.save((err,candidate) => {
@@ -118,8 +117,7 @@ router.post("/nominatecandidate/:nomineeId/:groupId", (req, res, next) => {
      }else{
        console.log("candidate ID",candidate._id)
        res.status(201).json({
-         message: "Item was saved successfully",
-         newcandidate:candidate
+         message: "Item was saved successfully"
       })
      }
    })

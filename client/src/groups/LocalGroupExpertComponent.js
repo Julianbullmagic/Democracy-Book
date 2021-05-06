@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Expertfeed from './../post/Expertfeed'
 import auth from './../auth/auth-helper'
 
+const mongoose = require("mongoose");
 
 
 export default function LocalGroupExpertComponent(props) {
@@ -33,8 +34,25 @@ checkLastCandidateShuffle()
 },[candidates])
 
 useEffect(() => {
-var leaderids=leaders.map(item=>{return item._id})
+updateLeaders()
+// props.updateLeaders(leaders)
+},[leaders])
 
+
+
+useEffect(() => {
+  checkWinner()
+
+  checkLastCandidateShuffle()
+
+},[groupData])
+
+
+
+function updateLeaders(){
+  console.log("leaders in update leaders",leaders)
+var leaderids=leaders.map(item=>{return item._id})
+console.log("leader ids",leaderids)
    const options = {
      method: 'put',
      headers: {
@@ -46,21 +64,10 @@ var leaderids=leaders.map(item=>{return item._id})
    fetch("updateleaders/"+groupId, options
   ).then(res => {
   console.log(res);
-  fetchGroupData()
   }).catch(err => {
   console.log(err);
   })
-props.updateLeaders(leaders)
-},[leaders])
-
-
-
-useEffect(() => {
-  checkLastCandidateShuffle()
-
-},[groupData])
-
-
+}
 
 
 function toggleNominationsFunction(){
@@ -84,7 +91,9 @@ var expertcandidatescopy=JSON.parse(JSON.stringify(candidates))
 
 var sortedcandidates=expertcandidatescopy.sort((a, b) => (a.votes.length < b.votes.length) ? 1 : -1)
 var sortedcandidatestop4=sortedcandidates.slice(0,4)
+console.log("sortedcandidatestop4",sortedcandidatestop4)
 setLeaders(sortedcandidatestop4)
+
 }
 
 function shuffleCandidates(){
@@ -303,22 +312,33 @@ console.log(err);
 
 
       function nominate(e,nomineeId,nomineeName,nomineeexpertise){
-console.log("nominee name",nomineeName)
 
-  var newCandidate= {
+  const newCandidate= {
+    _id:mongoose.Types.ObjectId(),
+    userId:nomineeId,
+    groupId:groupId,
     name: nomineeName,
     expertise:nomineeexpertise,
     timecreated:new Date().getTime(),
     votes:[auth.isAuthenticated().user._id]
   }
-
-
-
+console.log("new candidate",newCandidate)
 
   var justnames=candidates.map(item=>{return item.name})
-console.log("candidates",candidates,justnames)
+console.log("candidates",candidates,justnames,groupData,newCandidate)
 
 if(!justnames.includes(newCandidate.name)){
+
+
+  var candidatesCopy=JSON.parse(JSON.stringify(candidates))
+  candidatesCopy.push(newCandidate)
+  setCandidates(candidatesCopy)
+
+
+
+
+  addNomineeToGroupObject(newCandidate._id)
+  console.log("does not include")
   const options = {
   method: 'post',
   headers: {
@@ -327,19 +347,11 @@ if(!justnames.includes(newCandidate.name)){
      body: JSON.stringify(newCandidate)
   }
 
-  fetch("nominatecandidate/" + nomineeId + "/" +groupId, options
+  fetch("nominatecandidate/", options
   ).then(res => res.json())
   .then(res => {
-  newCandidate=res.newcandidate
-  console.log("new candidates",newCandidate)
-  var groupDataCopy=JSON.parse(JSON.stringify(groupData))
-  console.log(groupDataCopy)
-  groupDataCopy.expertcandidates.push(newCandidate)
+console.log(res)
 
-  console.log("groupDataCopy with new candidate",groupDataCopy)
-  setGroupData(groupDataCopy)
-  setCandidates(groupDataCopy.expertcandidates)
-  addNomineeToGroupObject(res.id)
   }).catch(err => {
   console.log(err);
   })
@@ -351,6 +363,7 @@ if(!justnames.includes(newCandidate.name)){
 
 
 function addNomineeToGroupObject(candidateId){
+  console.log("candidateId and groupId",candidateId,groupId)
   const options2 = {
   method: 'put',
   headers: {
@@ -489,6 +502,8 @@ var membersmapped=<h3>No Members</h3>
 })
 }
 
+
+console.log("leaders below",leaders)
 
   return (
     <section>

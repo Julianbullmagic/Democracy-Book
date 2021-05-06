@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const candidateSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   name:String,
+  expertise:String,
   timecreated:Number,
   userId: {type: mongoose.Schema.ObjectId, ref: 'User'},
   groupId: {type: mongoose.Schema.ObjectId, ref: 'Group'},
