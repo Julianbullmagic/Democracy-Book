@@ -35,13 +35,12 @@ checkLastCandidateShuffle()
 
 useEffect(() => {
 updateLeaders()
-// props.updateLeaders(leaders)
+props.updateLeaders(leaders)
 },[leaders])
 
 
 
 useEffect(() => {
-  checkWinner()
 
   checkLastCandidateShuffle()
 
@@ -90,7 +89,7 @@ var expertcandidatescopy=JSON.parse(JSON.stringify(candidates))
 
 
 var sortedcandidates=expertcandidatescopy.sort((a, b) => (a.votes.length < b.votes.length) ? 1 : -1)
-var sortedcandidatestop4=sortedcandidates.slice(0,4)
+var sortedcandidatestop4=sortedcandidates.slice(0,2)
 console.log("sortedcandidatestop4",sortedcandidatestop4)
 setLeaders(sortedcandidatestop4)
 
@@ -183,11 +182,11 @@ fetch("populatemembersbelow/"+props.groupId)
     console.log("response.data",response['data'])
     setGroupData(response['data'][0])
     if(response['data'][0]['expertcandidates']){
+      console.log("setting candidates")
     setCandidates(response['data'][0]['expertcandidates'])}
     if(response['data'][0]['expertcandidates']){
     console.log("response.data.leaders",response['data'][0]['leaders'])
     setLeaders(response['data'][0]['leaders'])}
-checkWinner()
 
 var groupDataCopy=JSON.parse(JSON.stringify(response["data"][0]))
 var currenttime=new Date().getTime()

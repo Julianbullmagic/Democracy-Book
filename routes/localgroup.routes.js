@@ -435,13 +435,10 @@ console.log("populating members")
 
     })
 
-    router.route('/splitgroup/').post((req, res) => {
-
-var group=req.body
-
+    router.route('/newlowerlevelgroup/').post((req, res) => {
 
    let newGroup = new LocalGroup({
-     _id: new mongoose.Types.ObjectId(),
+     _id: req.body["_id"],
      title :req.body["title"],
      location:req.body["location"],
      description: req.body["description"],
@@ -465,6 +462,41 @@ var group=req.body
      }
    })
    })
+
+
+
+       router.route('/newhigherlevelgroup/').post((req, res) => {
+
+      let newGroup = new HigherLevelGroup({
+        _id: req.body["_id"],
+        title :req.body["title"],
+        location:req.body["location"],
+        lastcandidateshuffle:req.body["lastcandidateshuffle"],
+        description: req.body["description"],
+        centroid: req.body["centroid"],
+        rules: req.body["rules"],
+        members: req.body["members"],
+        allmembers: req.body["allmembers"],
+        lowerGroupIds:req.body["newLowerGroupIds"]
+
+      });
+
+      console.log("new higherlevel group in router",newGroup)
+
+
+      newGroup.save((err) => {
+        if(err){
+          res.status(400).json({
+            message: "The Item was not saved",
+            errorMessage : err.message
+         })
+        }else{
+          res.status(201).json({
+            message: "Item was saved successfully"
+         })
+        }
+      })
+      })
 
 
 

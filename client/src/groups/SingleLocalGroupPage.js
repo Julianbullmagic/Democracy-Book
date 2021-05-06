@@ -7,6 +7,7 @@ import LocalGroupExpertComponent from './LocalGroupExpertComponent'
 import Kmeans from 'node-kmeans';
 const KmeansLib = require('kmeans-same-size');
 const kmeans = require('node-kmeans');
+const mongoose = require("mongoose");
 
 
 
@@ -22,6 +23,7 @@ class SingleLocalGroupPage extends Component {
              leaders:[],
              candidates:[],
              groupData:{},
+             newLowerGroupIds:[],
              id:'',
              rules: [],
              redirect: false,
@@ -49,14 +51,16 @@ componentDidMount(){
                leaders:blob['data'][0]['leaders'],rules: blob['data'][0]['rules'],
              centroid: blob['data'][0]['centroid'],members: blob['data'][0]['members']})
 
-          if(blob['data'][0]['members']['length']>=16){
+          if(blob['data'][0]['members']['length']>=8){
 
           this.splitGroupMembers(this.state.members)
           }
 
-
-
         })
+}
+
+componentDidUpdate(){
+  console.log("LEADERS!!!!",this.state.leaders)
 }
 
 
@@ -70,6 +74,7 @@ newSplitGroups(groupIds,centroid){
 
 postSplitGroup(placename,centroid,groupIds){
   var newGroup={
+    _id:mongoose.Types.ObjectId(),
     title: this.state.title,
     location:placename,
     description: this.state.description,
@@ -82,8 +87,14 @@ postSplitGroup(placename,centroid,groupIds){
             headers: {
                 "Content-type": "application/json; charset=UTF-8"}}
 
-                fetch("splitgroup/", options)
+                fetch("newlowerlevelgroup/", options)
                         .then(response => response.json()).then(json => console.log(json));
+
+var newLowerGroupIdsCopy=[...this.state.newLowerGroupIds]
+newLowerGroupIdsCopy.push(newGroup._id)
+
+console.log("newLowerGroupIdsCopy")
+      this.setState({newLowerGroupIds:newLowerGroupIdsCopy})
 
 }
 
@@ -96,7 +107,7 @@ newHigherLevelGroup(groupIds,centroid){
 
 
 getRandomMembers(arr, n){
-    var result = new Array(4),
+    var result = new Array(2),
         len = arr.length,
         taken = new Array(len);
     if (n > len)
@@ -112,18 +123,31 @@ getRandomMembers(arr, n){
 postHigherLevelGroup(placename,centroid){
 
   var groupmembers=JSON.parse(JSON.stringify(this.state.members))
-  console.log("groupmembers",groupmembers)
-  var randomsampleofmembers=this.getRandomMembers(groupmembers, 4)
-  console.log("randomsampleofmembers",randomsampleofmembers)
+  var groupleaders=JSON.parse(JSON.stringify(this.state.leaders))
+  var groupleadernames=groupleaders.map(item=>{return item.name})
+  var membersofleaders=[]
+  for (var member of groupmembers){
+    if(groupleadernames.includes(member.name)){
+      membersofleaders.push(member)
+    }
+  }
 
-  var newmembersarray=[...randomsampleofmembers,...this.state.leaders]
+
+  var randomsampleofmembers=this.getRandomMembers(groupmembers, 2)
+  var newmembersarray=[...randomsampleofmembers,...membersofleaders]
+  console.log("new members array",newmembersarray)
+  var newmembersids=newmembersarray.map(item=>{return item._id})
+
 
   var newGroup={
+    _id:mongoose.Types.ObjectId(),
     title: this.state.title,
     location:placename,
     description: this.state.description,
-    members:randomsampleofmembers,
-    allmembers:[...this.state.members],
+    lastcandidateshuffle:new Date().setHours(0,0,0,0),
+    members:newmembersids,
+    newLowerGroupIds:this.state.newLowerGroupIds,
+    allmembers:this.state.members,
     centroid:centroid,
     rules:this.state.rules}
         const options={
@@ -132,7 +156,7 @@ postHigherLevelGroup(placename,centroid){
             headers: {
                 "Content-type": "application/json; charset=UTF-8"}}
 
-                fetch("splitgroup/", options)
+                fetch("newhigherlevelgroup/", options)
                         .then(response => response.json()).then(json => console.log(json));
 
 }
@@ -170,7 +194,7 @@ splitGroupMembers(info){
 
            var kmeans = new KmeansLib();
            const k = 2; // Groups Number
-           const size = 8 // Group size
+           const size = 4 // Group size
 
            kmeans.init({k: k, runs: size, equalSize: true, normalize: false });
 
