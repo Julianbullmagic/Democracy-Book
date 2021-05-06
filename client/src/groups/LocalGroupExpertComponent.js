@@ -313,6 +313,8 @@ console.log(err);
 
       function nominate(e,nomineeId,nomineeName,nomineeexpertise){
 
+
+console.log("nominee id",nomineeId)
   const newCandidate= {
     _id:mongoose.Types.ObjectId(),
     userId:nomineeId,
@@ -336,9 +338,6 @@ if(!justnames.includes(newCandidate.name)){
 
 
 
-
-  addNomineeToGroupObject(newCandidate._id)
-  console.log("does not include")
   const options = {
   method: 'post',
   headers: {
@@ -351,7 +350,7 @@ if(!justnames.includes(newCandidate.name)){
   ).then(res => res.json())
   .then(res => {
 console.log(res)
-
+addNomineeToGroupObject(res.id)
   }).catch(err => {
   console.log(err);
   })

@@ -101,7 +101,7 @@ router.post("/nominatecandidate/", (req, res, next) => {
      name:req.body.name,
      expertise:req.body.expertise,
      timecreated:req.body.timecreated,
-     userId:req.body.nomineeId,
+     userId:req.body.userId,
      groupId:req.body.groupId,
      votes:[...req.body.votes]
       })
@@ -117,7 +117,8 @@ router.post("/nominatecandidate/", (req, res, next) => {
      }else{
        console.log("candidate ID",candidate._id)
        res.status(201).json({
-         message: "Item was saved successfully"
+         message: "Candidate was saved successfully",
+         id:candidate._id
       })
      }
    })
