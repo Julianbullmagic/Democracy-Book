@@ -102,6 +102,8 @@ export default function Signup (){
     }
 
     function joinLocalGroup(usercoords,groupscoords,data){
+
+      console.log("joining local group")
 console.log(data.id)
 console.log(usercoords)
 console.log(groupscoords)

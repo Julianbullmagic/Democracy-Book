@@ -15,6 +15,51 @@ const mongoose = require("mongoose");
 mongoose.set('useFindAndModify', false);
 
 
+router.put("/joinhigherlevelgroup/:groupId/:userId", (req, res, next) => {
+  let userId = req.params.userId;
+  let groupId = req.params.groupId;
+  console.log(userId)
+  console.log(groupId)
+      const updatedGroup=HigherLevelGroup.findByIdAndUpdate(groupId, {$addToSet : {
+      members:userId
+    }}).exec()
+
+User.findByIdAndUpdate(
+  { _id: userId },
+  { higherlevelgrouptheybelongto: groupId },
+  function(err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  }
+)
+    })
+
+
+    router.put("/changelocalgroupsofmembers/:groupid/:memberid", (req, res, next) => {
+      let groupId = req.params.groupid;
+      let memberId = req.params.memberid;
+      console.log(groupId)
+      console.log(groupId)
+      console.log("CHANGING LOCAL GROUPS OF USER OBJECTS")
+
+
+    User.findByIdAndUpdate(
+       memberId ,
+      { localgroup: groupId },
+      function(err, result) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.send(result);
+        }
+      }
+    )
+        })
+
+
 
 
 router.post('/sendelectionnotification/:groupName/:groupId', (req, res, next) => {
@@ -343,6 +388,20 @@ router.get("/findgroupscoordinates", (req, res, next) => {
         })})
 
 
+              router.get("/findlocalgroups/:groupId", (req, res, next) => {
+                let groupId = req.params.groupId;
+                    const items=LocalGroup.findById(groupId).exec(function(err,docs){
+                      if(err){
+                              console.log(err);
+                          }else{
+                              res.status(200).json({
+                                          data: docs
+                                      });
+                    }
+                })})
+
+
+
 
 router.post("/createlocalgroup", (req, res, next) => {
 
@@ -370,7 +429,6 @@ router.post("/createlocalgroup", (req, res, next) => {
 router.get("/findgroups", (req, res, next) => {
 
       const items=LocalGroup.find()
-      .populate('rules')
       .exec(function(err,docs){
         if(err){
                 console.log(err);
@@ -381,6 +439,61 @@ router.get("/findgroups", (req, res, next) => {
       }
 
   })})
+
+
+  router.get("/findhigherlevelgroups", (req, res, next) => {
+
+        const items=HigherLevelGroup.find()
+        .exec(function(err,docs){
+          if(err){
+                  console.log(err);
+              }else{
+                  res.status(200).json({
+                              data: docs
+                          });
+        }
+
+    })})
+
+
+
+  router.put("/updateradius/:groupId/:radius", (req, res, next) => {
+    let radius = req.params.radius;
+    let groupId = req.params.groupId;
+
+
+
+  LocalGroup.findByIdAndUpdate(
+    { _id: groupId },
+    { radius: radius },
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(result);
+      }
+    }
+  )
+
+
+      })
+
+
+      router.put("/addhighergrouptolowergroup/:higherId/:groupId", (req, res, next) => {
+        let groupId = req.params.groupId;
+        let higherId = req.params.higherId;
+
+
+
+LocalGroup.findByIdAndUpdate(groupId,{ higherlevelgroup: higherId },function(err, result) {
+  if (err) {
+    res.send(err);
+  } else {
+    res.send(result);
+  }
+}
+)
+          })
 
   router.get("/populatemembers/:groupId", (req, res, next) => {
     let groupId = req.params.groupId;
@@ -435,19 +548,30 @@ console.log("populating members")
 
     })
 
-    router.route('/newlowerlevelgroup/').post((req, res) => {
+    router.route('/leave/:groupId/:userId').put((req, res) => {
+      let userId = req.params.userId;
+      let groupId = req.params.groupId;
 
+
+      const updatedGroup=LocalGroup.findByIdAndUpdate(groupId, {$pull : {
+      members:userId
+    }}).exec()
+
+
+    })
+
+    router.route('/newlowerlevelgroup/').post((req, res) => {
    let newGroup = new LocalGroup({
      _id: req.body["_id"],
      title :req.body["title"],
      location:req.body["location"],
      description: req.body["description"],
+     higherlevelgroup:req.body["higherlevelgroup"],
      centroid: req.body["centroid"],
      rules: [...req.body["rules"]],
      members: [...req.body["members"]],
 
    });
-
 
    newGroup.save((err) => {
      if(err){
@@ -461,6 +585,26 @@ console.log("populating members")
       })
      }
    })
+   console.log("MEMBERS!!",req.body["members"])
+
+
+
+
+
+
+   }
+   )
+
+
+   router.route('/assignnewlowerlevelgroup/:group').put((req, res) => {
+     console.log(req.body)
+   var members=[...req.body]
+   for(var member of members){
+     const updatedGroup=Group.findByIdAndUpdate(member, {
+     localgroup:req.params.group
+   }).exec()
+
+   }
    })
 
 
@@ -578,6 +722,8 @@ router.route('/join/:groupId/:userId').put((req, res) => {
   const updatedGroup=LocalGroup.findByIdAndUpdate(groupId, {$addToSet : {
   members:userId
 }}).exec()
+
+
 
 
 })

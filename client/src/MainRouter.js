@@ -9,8 +9,8 @@ import Profile from './user/Profile'
 import PrivateRoute from './auth/PrivateRoute'
 import GroupsPage from './groups/GroupsPage'
 import Marketplace from './marketplace/Marketplace'
-import SingleLocalGroupPage from './groups/SingleLocalGroupPage'
 import SingleGroupPage from './groups/SingleGroupPage'
+
 import Menu from './core/Menu'
 
 
@@ -28,9 +28,7 @@ const MainRouter = () => {
         <Route exact path="/marketplace" component={Marketplace}/>
         <PrivateRoute path="/user/edit/:userId" component={EditProfile}/>
         <Route exact path="/user/:userId" component={Profile}/>
-        <Route exact path="/groups/:groupId"    component={SingleGroupPage}/>
-        <Route exact path="/localgroup/:groupId"    component={SingleLocalGroupPage}/>
-
+        <Route exact path="/groups/:groupId/:grouptype"    component={SingleGroupPage}/>
       </Switch>
     </div>)
 }

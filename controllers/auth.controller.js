@@ -31,7 +31,8 @@ console.log(user)
 
     return res.json({
       token,
-      user: {_id: user._id, name: user.name,coordinates:user.coordinates, email: user.email, localgroup:user.localgroup}
+      user: {_id: user._id, name: user.name,coordinates:user.coordinates, email: user.email, localgroup:user.localgroup,
+        groupstheybelongto:user.groupstheybelongto,higherlevelgrouptheybelongto:user.higherlevelgrouptheybelongto}
     })
   } catch (err) {
     console.log(err)

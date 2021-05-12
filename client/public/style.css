@@ -12,6 +12,11 @@ body{
    align-items: center;
 }
 
+.leaflet-container {
+  width: 100%;
+  height: 300px;
+}
+
 p{
   color:#009688;
 }

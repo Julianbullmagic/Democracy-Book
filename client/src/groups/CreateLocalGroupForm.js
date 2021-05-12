@@ -10,10 +10,15 @@ export default function CreateLocalGroupForm() {
 const [toggle, setToggle] = useState(false);
 
 function getLocationName(){
+  console.log(auth.isAuthenticated().user.coordinates[0],auth.isAuthenticated().user.coordinates[1])
 
-fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${auth.isAuthenticated().user.coordinates[0]},${auth.isAuthenticated().user.coordinates[1]}.json?access_token=pk.eyJ1IjoianVsaWFuYnVsbCIsImEiOiJja25zbXJibW0wNHgwMnZsaHJoaDV6MTg4In0.qPBGW4XMJcsZSUCrQej8Zw`)
+
+fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${auth.isAuthenticated().user.coordinates[1]},${auth.isAuthenticated().user.coordinates[0]}.json?access_token=pk.eyJ1IjoianVsaWFuYnVsbCIsImEiOiJja25zbXJibW0wNHgwMnZsaHJoaDV6MTg4In0.qPBGW4XMJcsZSUCrQej8Zw`)
                   .then(response => response.json())
-                    .then(data => postGroup(data["features"][2]["place_name"]))
+                    .then(data =>{
+                      console.log("DATA",data["features"][2]["place_name"])
+                      postGroup(data["features"][2]["place_name"])
+                    })
 }
 
 

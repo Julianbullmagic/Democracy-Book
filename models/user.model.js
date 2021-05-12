@@ -13,7 +13,9 @@ const userSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, 'Please fill a valid email address'],
     required: 'Email is required'
   },
-  groupstheybelongto:[{type: mongoose.Schema.ObjectId, ref: 'LocalGroup'}],
+  groupstheybelongto:[{type: mongoose.Schema.ObjectId, ref: 'Group'}],
+  higherlevelgrouptheybelongto:[{type: mongoose.Schema.ObjectId, ref: 'HigherLevelGroup'}],
+
   expertise:String,
   coordinates: {
     type: [Number],

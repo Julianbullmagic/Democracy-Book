@@ -16,6 +16,9 @@ const groupSchema = mongoose.Schema({
     type: String,
   },
   centroid:[Number],
+  higherlevelgroup:{type:mongoose.Schema.Types.ObjectId,ref:"HigherLevelGroup"},
+
+    radius:Number,
   leaders:[{type:mongoose.Schema.Types.ObjectId,ref:"ExpertCandidate"}],
   rules: [{type:mongoose.Schema.Types.ObjectId,ref:"Rule"}],
   members: [{type:mongoose.Schema.Types.ObjectId,ref:"User"}],

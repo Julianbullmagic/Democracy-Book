@@ -60,7 +60,7 @@ console.log("leader ids",leaderids)
         body: JSON.stringify(leaderids)
    }
 
-   fetch("updateleaders/"+groupId, options
+   fetch("/"+props.grouptype+"/updateleaders/"+groupId, options
   ).then(res => {
   console.log(res);
   }).catch(err => {
@@ -143,7 +143,7 @@ if(((timenow-groupData.lastcandidateshuffle)>86400000)&&candidates.length>1){
        body: JSON.stringify(timenow)
   }
 
-  fetch("resetleaderreview/"+groupId, options
+  fetch("/"+props.grouptype+"/resetleaderreview/"+groupId, options
  ).then(res => {
  console.log(res);
  }).catch(err => {
@@ -161,7 +161,7 @@ var candidateids=expertcandidates.map(item=>{return item._id})
       body: JSON.stringify(candidateids)
  }
 
- fetch("resetcandidatesaftershuffle/"+groupId, options2
+ fetch("/"+props.grouptype+"/resetcandidatesaftershuffle/"+groupId, options2
 ).then(res => {
 console.log(res);
 }).catch(err => {
@@ -176,7 +176,7 @@ console.log(err);
 
 function fetchGroupData(){
 console.log("fetching group data",groupData)
-fetch("populatemembersbelow/"+props.groupId)
+fetch("/"+props.grouptype+"/populatemembersbelow/"+props.groupId)
 .then(result => {return result.json()})
 .then(response =>{
     console.log("response.data",response['data'])
@@ -240,7 +240,7 @@ approve(e,candidateId)
               body: ''
          }
 
-         fetch("approveofcandidate/" + candidateId +"/"+ auth.isAuthenticated().user._id, options
+         fetch("/"+props.grouptype+"/approveofcandidate/" + candidateId +"/"+ auth.isAuthenticated().user._id, options
 ).then(res => {
     console.log(res);
   }).catch(err => {
@@ -295,7 +295,7 @@ disapprove(e,candidateId)
         body: ''
    }
 
-   fetch("withdrawapprovalofcandidate/" + candidateId +"/"+ auth.isAuthenticated().user._id, options
+   fetch("/"+props.grouptype+"/withdrawapprovalofcandidate/" + candidateId +"/"+ auth.isAuthenticated().user._id, options
 ).then(res => {
 console.log(res);
 }).catch(err => {
@@ -345,7 +345,7 @@ if(!justnames.includes(newCandidate.name)){
      body: JSON.stringify(newCandidate)
   }
 
-  fetch("nominatecandidate/", options
+  fetch("/"+props.grouptype+"/nominatecandidate/", options
   ).then(res => res.json())
   .then(res => {
 console.log(res)
@@ -370,7 +370,7 @@ function addNomineeToGroupObject(candidateId){
      body: ''
 }
 
-fetch("addnomineetogroupobject/" + candidateId + "/" +groupId, options2
+fetch("/"+props.grouptype+"/addnomineetogroupobject/" + candidateId + "/" +groupId, options2
 ) .then(res => {
 console.log(res);
 }).catch(err => {
@@ -392,7 +392,7 @@ console.log(err);
                 body: ''
            }
 
-         fetch("removecandidate/" + nomineeId, options
+         fetch("/"+props.grouptype+"/removecandidate/" + nomineeId, options
   ).then(res => res.json())
   .then(res => {
   console.log(res);
@@ -417,7 +417,7 @@ function removeNomineeFromGroupObject(candidateId,groupId){
      body: ''
 }
 
-fetch("removenomineefromgroupobject/" + candidateId + "/" +groupId, options
+fetch("/"+props.grouptype+"/removenomineefromgroupobject/" + candidateId + "/" +groupId, options
 ).then(res => {
   res.json()
 })
@@ -511,24 +511,24 @@ console.log("leaders below",leaders)
     <button onClick={(e)=>toggleViewCandidatesFunction(e)}>See nominated candidates</button>
 {toggleViewCandidates&&candidatesmapped}
     <h2>Nominate a group member as a candidate</h2>
-    <h3>There are no particular election events on Democracy Book. Members can nominate and/or vote for any other
-    member at any time. If one member becomes more popular than another they can become leader at any time.The
-    elected leaders are servants of the people they represent, if they do not lead the group in a direction that
-    is in the best interests of the group, the group can take away authority at any time. Every day, the list of
-    nominated candidates is shuffled and then sorted in order from highest to lowest number of votes
-    candidates with equal numbers of votes will be ordered randomly. This may mean that if many people have equal numbers
-    of votes, each time they refresh the page, they may or may not be a leader. All of this is designed to make leaders feel
-    as insecure as possible, to force them to consult with and make the people they represent feel as comfortable as possible
-    with them being in charge. You must earn people's respect, you are not entitled to it. Power, in the sense of being able to
-    impose your will onto others, is never legitimate. Authority should be grounded in knowledge, wisdom and moral integrity,
-    not coercive force. Also, being removed from leadership does not necessarily reflect poorly on you as a person or your
-    overall character, your life circumstances may restrit your ability to perform the job effectively. It may not be your
-    fault, but the group still needs to have the most capable leaders. We think you are smart enough to understand the common
-    sense idea that experts often have valuable advice for us that we should take voluntarily. </h3>
-
 
 <button onClick={(e)=>toggleNominationsFunction(e)}>Nominate a member for leadership</button>
-  {toggleNominations&&membersmapped}
+
+  {toggleNominations&&<h3>There are no particular election events on Democracy Book. Members can nominate and/or vote for any other
+  member at any time. If one member becomes more popular than another they can become leader at any time.The
+  elected leaders are servants of the people they represent, if they do not lead the group in a direction that
+  is in the best interests of the group, the group can take away authority at any time. Every day, the list of
+  nominated candidates is shuffled and then sorted in order from highest to lowest number of votes
+  candidates with equal numbers of votes will be ordered randomly. This may mean that if many people have equal numbers
+  of votes, each time they refresh the page, they may or may not be a leader. All of this is designed to make leaders feel
+  as insecure as possible, to force them to consult with and make the people they represent feel as comfortable as possible
+  with them being in charge. You must earn people's respect, you are not entitled to it. Power, in the sense of being able to
+  impose your will onto others, is never legitimate. Authority should be grounded in knowledge, wisdom and moral integrity,
+  not coercive force. Also, being removed from leadership does not necessarily reflect poorly on you as a person or your
+  overall character, your life circumstances may restrit your ability to perform the job effectively. It may not be your
+  fault, but the group still needs to have the most capable leaders. We think you are smart enough to understand the common
+  sense idea that experts often have valuable advice for us that we should take voluntarily. </h3>}
+    {toggleNominations&&membersmapped}
 
     </section>
   )}
