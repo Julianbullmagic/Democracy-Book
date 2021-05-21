@@ -4,7 +4,7 @@ import { MapContainer, TileLayer,Circle} from 'react-leaflet'
 
 import auth from './../auth/auth-helper'
 
-class GroupsList extends Component {
+class SingleMarketPlaceItem extends Component {
 
 
   constructor(props) {
@@ -235,4 +235,4 @@ if(this.state.groups){groupsmapped=this.state.groups.map(item => {
   }
 }
 
-export default GroupsList;
+export default SingleMarketPlaceItem;

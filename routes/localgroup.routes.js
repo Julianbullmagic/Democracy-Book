@@ -184,12 +184,18 @@ router.route('/addnomineetogroupobject/:nominee/:group').put((req, res) => {
 
 router.route('/resetleaderreview/:groupId').put((req, res) => {
   let groupId = req.params.groupId;
-console.log("timenow",req.body)
   const updatedGroup=LocalGroup.findByIdAndUpdate(groupId, {
-  lastcandidateshuffle:req.body
+  lastcandidateshuffle:req.body.lastcandidateshuffle,
+  randomsample:req.body.randomsample
 }).exec()
+})
 
-
+router.route('/resethigherlevelleaderreview/:groupId').put((req, res) => {
+  let groupId = req.params.groupId;
+  const updatedGroup=HigherLevelGroup.findByIdAndUpdate(groupId, {
+    lastcandidateshuffle:req.body.lastcandidateshuffle,
+    randomsample:req.body.randomsample
+}).exec()
 })
 
 router.route('/resetcandidatesaftershuffle/:groupId').put((req, res) => {
@@ -375,6 +381,51 @@ router.get("/findgroupscoordinates", (req, res, next) => {
       })
 
 
+      router.put("/adddatatohigherlevelgroup/:groupId", (req, res, next) => {
+        let groupId = req.params.groupId;
+
+          HigherLevelGroup.findByIdAndUpdate(groupId, {$addToSet : {lowerGroupIds:{$each:[...req.body.newlowergroupids]}}}).exec()
+          HigherLevelGroup.findByIdAndUpdate(groupId, {$addToSet : {members:{$each:[...req.body.newgroupids]}}}).exec()
+          HigherLevelGroup.findByIdAndUpdate(groupId, {$addToSet : {allmembers:{$each:[...req.body.ids]}}}).exec()
+          HigherLevelGroup.findById(groupId).exec(function(err,docs){
+            if(err){
+                    console.log(err);
+                }else{
+                    res.status(200).json({
+                                data: docs
+                            })}})})
+
+router.put("/recallmemberfromhighergroup/:highergroupId/:memberid", (req, res, next) => {
+    let highergroupId = req.params.highergroupId;
+    let memberId = req.params.memberId;
+
+     HigherLevelGroup.findByIdAndUpdate(highergroupId, {$pull : {members:memberId}}).exec()
+     HigherLevelGroup.findById(groupId).exec(function(err,docs){
+      if(err){
+        console.log(err);
+      }else{
+        res.status(200).json({
+                  data: docs
+                })}})})
+
+
+                router.put("/addrepresentativetohighergroup/:highergroupId/:memberid", (req, res, next) => {
+                    let highergroupId = req.params.highergroupId;
+                    let memberId = req.params.memberId;
+
+                     HigherLevelGroup.findByIdAndUpdate(highergroupId, {$addToSet : {members:memberId}}).exec()
+                     HigherLevelGroup.findById(groupId).exec(function(err,docs){
+                      if(err){
+                        console.log(err);
+                      }else{
+                        res.status(200).json({
+                                  data: docs
+                                })}})})
+
+
+
+
+
       router.get("/findlocalgroup/:groupId", (req, res, next) => {
         let groupId = req.params.groupId;
             const items=LocalGroup.findById(groupId).exec(function(err,docs){
@@ -383,7 +434,7 @@ router.get("/findgroupscoordinates", (req, res, next) => {
                   }else{
                       res.status(200).json({
                                   data: docs
-                              });
+                              })
             }
         })})
 
@@ -514,6 +565,30 @@ console.log("populating members")
         }
     })})
 
+    router.get("/populatehighergroupmembers/:groupId", (req, res, next) => {
+      let groupId = req.params.groupId;
+  console.log("populating members")
+          const items=HigherLevelGroup.find({_id:groupId})
+          .populate('members')
+          .populate('rules')
+          .populate('higherlevelgroup')
+          .populate('leaders')
+          .populate('expertcandidates')
+          .exec(function(err,docs){
+            if(err){
+                    console.log(err);
+                }else{
+                  console.log("docs",docs)
+                    res.status(200).json({
+                                data: docs
+                            });
+          }
+      })})
+
+
+
+
+
       router.get("/populatemembersbelow/:groupId", (req, res, next) => {
         let groupId = req.params.groupId;
     console.log("populating members")
@@ -521,6 +596,7 @@ console.log("populating members")
             .populate('members')
             .populate('rules')
             .populate('leaders')
+            .populate('higherlevelgroup')
             .populate('expertcandidates')
             .exec(function(err,docs){
               if(err){
@@ -565,6 +641,8 @@ console.log("populating members")
      _id: req.body["_id"],
      title :req.body["title"],
      location:req.body["location"],
+     lastcandidateshuffle:req.body["lastcandidateshuffle"],
+     randomsample:[...req.body["randomsample"]],
      description: req.body["description"],
      higherlevelgroup:req.body["higherlevelgroup"],
      centroid: req.body["centroid"],
@@ -643,21 +721,42 @@ console.log("populating members")
       })
 
 
-
-   router.route('/deletegroup/:id').delete((req, res) => {
+   router.route('/deletelowergroup/:id').delete((req, res) => {
      let groupid = req.params.id
 
-    LocalGroup.findByIdAndDelete(groupid, function (err, docs) {
-    if (err){
-        console.log(err)
+console.log("deleting lower group!!!!!!!!!!!!!",groupid)
+    LocalGroup.findByIdAndDelete(groupid, function(err,docs){
+      if(err){
+              console.log(err);
+          }else{
+
+              res.status(200).json({
+                          data: docs
+                      })
     }
-    else{
-        console.log("Deleted : ", docs);
-    }
-});
+     })
 
 
    })
+
+   router.route('/deletehighergroup/:id').delete((req, res) => {
+     let groupid = req.params.id
+     console.log("deleting higher group!!!!!!!!!!!!!",groupid)
+
+    HigherLevelGroup.findByIdAndDelete(groupid, function(err,docs){
+      if(err){
+              console.log(err);
+          }else{
+
+              res.status(200).json({
+                          data: docs
+                      })
+    }
+     })
+
+
+   })
+
 
 
 

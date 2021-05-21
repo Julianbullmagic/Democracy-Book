@@ -50,6 +50,7 @@ if (params.groupId){
 }
 else{
   try {
+    console.log("listing news feed")
     let response = await fetch('/api/posts/feed/'+ params.userId, {
       method: 'GET',
       signal: signal,

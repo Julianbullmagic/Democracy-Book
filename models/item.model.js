@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var random = require('mongoose-simple-random');
 
 
 const itemSchema = mongoose.Schema({
@@ -13,11 +14,15 @@ const itemSchema = mongoose.Schema({
   priceorrate: {
     type: String,
   },
+  cooperative:{type:mongoose.Schema.Types.ObjectId,ref:"Shop"},
   createdby:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
   labourtime: {
     type: String,
   }
 
 })
+
+itemSchema.plugin(random);
+
 
 module.exports =  mongoose.model('Item', itemSchema)

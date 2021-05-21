@@ -16,6 +16,7 @@ import {create} from './api-user.js'
 import {Link} from 'react-router-dom'
 import auth from './../auth/auth-helper'
 var geodist = require('geodist')
+const mongoose = require("mongoose");
 
 
 const useStyles = makeStyles(theme => ({
@@ -101,12 +102,12 @@ export default function Signup (){
       }
     }
 
-    function joinLocalGroup(usercoords,groupscoords,data){
+    function joinLocalGroup(usercoords,groupscoords,userid){
 
       console.log("joining local group")
-console.log(data.id)
 console.log(usercoords)
 console.log(groupscoords)
+console.log(userid)
 
 const distances=groupscoords.map(item=>{
   let dist=calculatedist(item['centroid'],usercoords)
@@ -126,13 +127,13 @@ const options = {
      body: ''
 }
 
-fetch("groups/joinlocalgroup/"+distances[0]['id']+"/"+ data.id, options
+fetch("groups/joinlocalgroup/"+distances[0]['id']+"/"+ userid.toString(), options
 )  .then(res => {
 console.log(res);
 }).catch(err => {
 console.log(err);
 })
-
+return distances[0]['id']
     }
 
     function calculatedist(groupcoords,usercoords){
@@ -151,10 +152,15 @@ console.log(err);
   }
 
   function createUser(coords){
+    var userId=mongoose.Types.ObjectId()
+    console.log("groups coordinates",values.groupsCoordiantes)
+    var localgroup=joinLocalGroup(values.coordinates,values.groupsCoordinates,userId)
     const user = {
+      _id:userId,
       name: values.name || undefined,
       email: values.email || undefined,
       expertise: values.expertise || undefined,
+      localgroup:localgroup||undefined,
       coordinates: values.coordinates||coords || undefined,
       password: values.password || undefined
     }
@@ -164,7 +170,6 @@ console.log(err);
       } else {
         setValues({ ...values, error: '', open: true})
         console.log("coords",user.coordinates)
-        joinLocalGroup(user.coordinates,values.groupsCoordinates,data)
       }
     })
 
@@ -173,7 +178,7 @@ console.log(err);
     return (<div>
       <Card className={classes.card}>
         <CardContent>
-          <Typography variant="h6" className={classes.title}>
+          <Typography id="title" variant="h6" className={classes.title}>
             Sign Up
           </Typography>
           <TextField id="name" label="Name" className={classes.textField} value={values.name} onChange={handleChange('name')} margin="normal"/><br/>
@@ -211,7 +216,7 @@ console.log(err);
           }
         </CardContent>
         <CardActions>
-        <button onClick={clickSubmit}>Submit</button>
+        <button id="submit" onClick={clickSubmit}>Submit</button>
         </CardActions>
       </Card>
       <Dialog open={values.open} disableBackdropClick={true}>

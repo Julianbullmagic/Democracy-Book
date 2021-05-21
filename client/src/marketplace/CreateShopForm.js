@@ -6,19 +6,17 @@ import auth from './../auth/auth-helper'
 export default function CreateItemForm() {
 const titleValue = React.useRef('')
 const descriptionValue = React.useRef('')
-const priceorrate = React.useRef('')
 
 
 
 
 function handleSubmit(e) {
 
-
+e.preventDefault()
 
     const newItem={
       title: titleValue.current.value,
-      description:descriptionValue.current.value,
-    priceorrate:priceorrate.current.value,
+      description:descriptionValue.current.value
     }
     console.log(newItem)
     const options={
@@ -28,7 +26,7 @@ function handleSubmit(e) {
             "Content-type": "application/json; charset=UTF-8"}}
 
 
-      fetch("marketplace/additem/"+ auth.isAuthenticated().user._id, options)
+      fetch("marketplace/addshop", options)
               .then(response => response.json()).then(json => console.log(json));
 
 
@@ -54,13 +52,6 @@ function handleSubmit(e) {
           id='name'
           ref={descriptionValue}
 
-        />
-        <label htmlFor='name'>Price or Rate</label>
-        <input
-          type='text'
-          name='name'
-          id='name'
-          ref={priceorrate}
         />
 
 

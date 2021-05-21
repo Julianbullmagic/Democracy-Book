@@ -9,13 +9,12 @@ import Profile from './user/Profile'
 import PrivateRoute from './auth/PrivateRoute'
 import GroupsPage from './groups/GroupsPage'
 import Marketplace from './marketplace/Marketplace'
+import SingleMarketPlaceItem from './marketplace/SingleMarketplaceItem'
+import SingleMarketPlaceShop from './marketplace/SingleMarketplaceShop'
 import SingleGroupPage from './groups/SingleGroupPage'
-
 import Menu from './core/Menu'
 
 
-// Then you can use them like this
-// <Route exact path={ routeCodes.ABOUT } component={ About } />
 const MainRouter = () => {
     return (<div>
       <Menu/>
@@ -26,9 +25,11 @@ const MainRouter = () => {
         <Route exact path="/signin" component={Signin}/>
         <Route exact path="/groups" component={GroupsPage}/>
         <Route exact path="/marketplace" component={Marketplace}/>
+        <Route exact path="/singlemarketplaceitem/:itemId" component={SingleMarketPlaceItem}/>
+        <Route exact path="/singlemarketplaceshop/:shopId" component={SingleMarketPlaceShop}/>
         <PrivateRoute path="/user/edit/:userId" component={EditProfile}/>
         <Route exact path="/user/:userId" component={Profile}/>
-        <Route exact path="/groups/:groupId/:grouptype"    component={SingleGroupPage}/>
+        <Route exact path="/groups/:groupId/:grouptype/:higherlower"    component={SingleGroupPage}/>
       </Switch>
     </div>)
 }

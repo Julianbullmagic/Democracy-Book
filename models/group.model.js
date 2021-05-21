@@ -9,6 +9,7 @@ const groupSchema = mongoose.Schema({
     type: String,
   },
   lastcandidateshuffle:Number,
+  randomsample:[{type:mongoose.Schema.Types.ObjectId,ref:"User"}],
   description: {
     type: String,
   },
@@ -17,8 +18,7 @@ const groupSchema = mongoose.Schema({
   },
   centroid:[Number],
   higherlevelgroup:{type:mongoose.Schema.Types.ObjectId,ref:"HigherLevelGroup"},
-
-    radius:Number,
+  radius:Number,
   leaders:[{type:mongoose.Schema.Types.ObjectId,ref:"ExpertCandidate"}],
   rules: [{type:mongoose.Schema.Types.ObjectId,ref:"Rule"}],
   members: [{type:mongoose.Schema.Types.ObjectId,ref:"User"}],

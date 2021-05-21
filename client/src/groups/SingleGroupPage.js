@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-// import { Redirect } from 'react-router';
 import auth from './../auth/auth-helper'
 import Newsfeed from './../post/Newsfeed'
 import NewRuleForm from './newRuleForm'
-import ExpertComponent from './LocalGroupExpertComponent'
+import ExpertComponent from './ExpertComponent'
 import Kmeans from 'node-kmeans';
 const KmeansLib = require('kmeans-same-size');
 const kmeans = require('node-kmeans');
@@ -21,13 +20,15 @@ class SingleGroupPage extends Component {
     constructor(props) {
            super(props);
            this.state = {
-            location:"",
-            grouptype:props.match.params.grouptype,
+             location:"",
+             grouptype:props.match.params.grouptype,
+             highorlow:props.match.params.higherlower,
              centroid:"",
              members:[],
              radius:0,
              leaders:[],
              candidates:[],
+             allmembers:[],
              higherlevelgroup:'',
              groupData:{},
              newLowerGroupIds:[],
@@ -49,49 +50,97 @@ updateLeaders(leaders){this.setState({ leaders: leaders })}
 
 componentDidMount(){
 
-             fetch("/"+this.state.grouptype+'/populatemembers/'+this.props.match.params.groupId).then(res => {
-               return res.json();
+if(this.state.highorlow=="higher"){
 
-             }).then(blob => {
-               console.log("blob in single group page",blob)
+               fetch("/"+this.state.grouptype+'/populatehighergroupmembers/'+this.props.match.params.groupId).then(res => {
+                 return res.json();
+               }).then(blob => {
+                 console.log("blob in single group page",blob)
 
+  var memberscopy=[...blob['data'][0]['members']]
+  var distancesArray=[]
+  for (var i = 0; i < memberscopy.length; i++){
+    for (var y = 0; y < memberscopy.length; y++){
+      console.log(memberscopy[i]['coordinates'][1], memberscopy[i]['coordinates'][0],
+      memberscopy[y]['coordinates'][1], memberscopy[y]['coordinates'][0])
 
-var memberscopy=[...blob['data'][0]['members']]
-var distancesArray=[]
-for (var i = 0; i < memberscopy.length; i++){
-  for (var y = 0; y < memberscopy.length; y++){
-    console.log(memberscopy[i]['coordinates'][1], memberscopy[i]['coordinates'][0],
-    memberscopy[y]['coordinates'][1], memberscopy[y]['coordinates'][0])
+       var distance=geolib.getDistance({latitude:memberscopy[i]['coordinates'][1], longitude:memberscopy[i]['coordinates'][0]},
+       {latitude:memberscopy[y]['coordinates'][1], longitude:memberscopy[y]['coordinates'][0]})
 
-     var distance=geolib.getDistance({latitude:memberscopy[i]['coordinates'][1], longitude:memberscopy[i]['coordinates'][0]},
-     {latitude:memberscopy[y]['coordinates'][1], longitude:memberscopy[y]['coordinates'][0]})
+    distancesArray.push(distance)
+  }
+  }
+  distancesArray.sort(function(a, b){return b-a});
 
-  distancesArray.push(distance)
+  this.postRadius(blob['data'][0]['_id'],distancesArray[0])
+
+            this.setState({groupData:blob['data'][0],
+            id:this.props.match.params.groupId,
+            location:blob['data'][0]['location'],
+            higherlevelgroup:blob['data'][0]['higherlevelgroup'],
+            allmembers:blob['data'][0]['allmembers'],
+            leaders:blob['data'][0]['leaders'],
+            rules: blob['data'][0]['rules'],
+            centroid: blob['data'][0]['centroid'],
+            members: blob['data'][0]['members']})
+
+         if(blob['data'][0]['members']['length']>=8&&blob['data'][0]['higherlevelgroup']){
+         this.splitGroupMembers(blob['data'][0]['members'],blob['data'][0]['higherlevelgroup'],blob['data'][0]['allmembers'])
+         console.log("groupID!!!!!!",this.props.match.params.groupId)
+         console.log("splitting group members arguments",blob['data'][0]['members'],blob['data'][0]['higherlevelgroup'],blob['data'][0]['allmembers'])
+         }
+         if(blob['data'][0]['members']['length']>=8){
+         this.splitGroupMembers(blob['data'][0]['members'],blob['data'][0]['higherlevelgroup'],blob['data'][0]['allmembers'])
+
+         }
+          })
 }
+
+
+
+
+if(this.state.highorlow=="lower"){
+
+               fetch("/"+this.state.grouptype+'/populatemembers/'+this.props.match.params.groupId).then(res => {
+                 return res.json();
+               }).then(blob => {
+                 console.log("blob in single group page",blob)
+
+  var memberscopy=[...blob['data'][0]['members']]
+  var distancesArray=[]
+  for (var i = 0; i < memberscopy.length; i++){
+    for (var y = 0; y < memberscopy.length; y++){
+      console.log(memberscopy[i]['coordinates'][1], memberscopy[i]['coordinates'][0],
+      memberscopy[y]['coordinates'][1], memberscopy[y]['coordinates'][0])
+
+       var distance=geolib.getDistance({latitude:memberscopy[i]['coordinates'][1], longitude:memberscopy[i]['coordinates'][0]},
+       {latitude:memberscopy[y]['coordinates'][1], longitude:memberscopy[y]['coordinates'][0]})
+
+    distancesArray.push(distance)
+  }
+  }
+  distancesArray.sort(function(a, b){return b-a});
+
+  this.postRadius(blob['data'][0]['_id'],distancesArray[0])
+
+            this.setState({groupData:blob['data'][0],
+            id:this.props.match.params.groupId,
+            location:blob['data'][0]['location'],
+            higherlevelgroup:blob['data'][0]['higherlevelgroup'],
+            leaders:blob['data'][0]['leaders'],
+            rules: blob['data'][0]['rules'],
+            centroid: blob['data'][0]['centroid'],
+            members: blob['data'][0]['members']})
+
+
+         if(blob['data'][0]['members']['length']>=8){
+         this.splitGroupMembers(blob['data'][0]['members'],blob['data'][0]['higherlevelgroup'])
+
+         }
+          })
 }
-distancesArray.sort(function(a, b){return b-a});
 
 
-this.postRadius(blob['data'][0]['_id'],distancesArray[0])
-
-console.log("LEADERS ABOVE",blob['data'][0]['leaders'])
-
-
-          this.setState({groupData:blob['data'][0],members: blob['data'][0]['members'],
-          id:this.props.match.params.groupId,location:blob['data'][0]['location'],
-          higherlevelgroup:blob['data'][0]['higherlevelgroup'],
-        leaders:blob['data'][0]['leaders'],rules: blob['data'][0]['rules'],
-       centroid: blob['data'][0]['centroid'],members: blob['data'][0]['members']})
-
-       if(blob['data'][0]['members']['length']>=8&&blob['data'][0]['higherlevelgroup']){
-       this.splitGroupMembers(blob['data'][0]['members'],blob['data'][0]['higherlevelgroup'])
-
-       }
-       if(blob['data'][0]['members']['length']>=8){
-       this.splitGroupMembers(blob['data'][0]['members'])
-
-       }
-        })
 
 
 
@@ -131,7 +180,8 @@ postSplitGroup(placename,centroid,groupIds,newId,newhigherid){
     location:placename,
     description: this.state.description,
     lastcandidateshuffle:new Date().setHours(0,0,0,0),
-      higherlevelgroup:newhigherid,
+    randomsample:this.getRandomMembers(groupIds, 2),
+    higherlevelgroup:newhigherid,
     members:[...groupIds],
     centroid:centroid,
     rules:this.state.rules}
@@ -192,7 +242,7 @@ console.log("placename,centroid,newId,lowergroupids",placename,centroid,newId,lo
 
   var groupmembers=JSON.parse(JSON.stringify(this.state.members))
   var groupleaders=JSON.parse(JSON.stringify(this.state.leaders))
-  console.log("leaders",groupleaders)
+  console.log("leaders then members",groupleaders,groupmembers)
   var groupleadernames=groupleaders.map(item=>{return item.name})
   var membersofleaders=[]
   for (var member of groupmembers){
@@ -202,10 +252,18 @@ console.log("placename,centroid,newId,lowergroupids",placename,centroid,newId,lo
   }
 
 
-  var randomsampleofmembers=this.getRandomMembers(groupmembers, 2)
-  console.log("new random members",randomsampleofmembers)
+  console.log("new random members",this.state.randomsample)
   console.log("new leader members",membersofleaders)
-  var newmembersarray=[...randomsampleofmembers,...membersofleaders]
+  var newmembersarray
+  if(this.state.randomsample){
+
+    console.log("this.state.randomsample on group object",this.state.randomsample)
+    newmembersarray=[...this.state.randomsample,...membersofleaders]
+
+  }else{
+  newmembersarray=[...membersofleaders]
+  }
+
   console.log("new members array!!!!!!!!!!",newmembersarray)
   var newmembersids=newmembersarray.map(item=> item._id)
 
@@ -283,14 +341,16 @@ recordWhichMembersJoin(userId,groupId){
   })
 }
 
-deleteGroup(){
+deleteGroup(id,type){
+
+  console.log("inside delete group",id,type)
   const options={
       method: "DELETE",
       body: '',
       headers: {
           "Content-type": "application/json; charset=UTF-8"}}
 
-  fetch("/"+this.state.grouptype+"/deletegroup/"+this.state.id, options)
+  fetch(`/${this.state.grouptype}/delete${type}group/${id}`, options)
           .then(response => response.json()).then(json => console.log(json));
 }
 
@@ -312,9 +372,9 @@ return results["groups"][0]["centroid"];
 
 
 
-splitGroupMembers(info,highergroupid){
+splitGroupMembers(info,highergroupid,allmembers){
 
-console.log("info,highergroupid",info,highergroupid)
+console.log("info,highergroupid",info,highergroupid,"groupid",this.state.id)
 
   var bias = 2.2;
 
@@ -380,12 +440,11 @@ console.log("group",group)
 (async () => {
 
 var newgroupids=[]
-var newid=mongoose.Types.ObjectId()
-
-console.log("NEW ID", newid)
+var newlowergroupids=[]
   for (var group of groupsarray){
-    console.log("NEW ID", newid)
     if (group.array.length>0){
+      var newid=mongoose.Types.ObjectId()
+newlowergroupids.push(newid)
       var groupIds=group.array.map(item=>{return item._id})
 
       await this.newSplitGroups(groupIds,group.centroid,group._id,newid)
@@ -405,39 +464,74 @@ sessionStorage.setItem('jwt', JSON.stringify(jwt));        }
 
 
   if(highergroupid){
+
+    console.log("highergroupid and groupid in split group members",highergroupid,this.state.id)
+
+      var groupmembers=JSON.parse(JSON.stringify(this.state.members))
+      var allmemberscopy
+      if(allmembers){
+        allmemberscopy=JSON.parse(JSON.stringify(allmembers))
+      }else{
+        allmemberscopy=JSON.parse(JSON.stringify(this.state.members))
+      }
+console.log("allmembers",allmembers)
+      var groupleaders=JSON.parse(JSON.stringify(this.state.leaders))
+      var groupleadernames=groupleaders.map(item=>{return item.name})
+      var membersofleaders=[]
+      for (var member of groupmembers){
+        if(groupleadernames.includes(member.name)){
+          membersofleaders.push(member)
+        }
+      }
+      var randomsampleofmembers=this.getRandomMembers(allmemberscopy, 2)
+
+      var newmembersarray=[...randomsampleofmembers,...membersofleaders]
+      var newmembersids=newmembersarray.map(item=> item._id)
+
+
     var memberscopy=JSON.parse(JSON.stringify(this.state.members))
-console.log("MEMBERS COPY WITH HIGHER GROUP",memberscopy)
-    // var ids=memberscopy.map(item=>{return item._id})
-    // var data={
-    //   newgroupids:newgroupids,
-    //   ids:ids
-    // }
-    // const options = {
-    //   method: 'put',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //      body: JSON.stringify(data)
-    // }
-    //
-    // await fetch("/"+this.state.grouptype+"/adddatatohigherlevelgroup/"+highergroupid, options
-    // )  .then(res => {
-    //
-    //
-    // }).catch(err => {
-    // console.log(err);
-    // })
+    var ids=memberscopy.map(item=>{return item._id})
+    var data={
+      newlowergroupids:newlowergroupids,
+      newgroupids:newmembersids,
+      ids:ids
+    }
+    const options = {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+         body: JSON.stringify(data)
+    }
+
+    await fetch("/"+this.state.grouptype+"/adddatatohigherlevelgroup/"+highergroupid, options
+    ).then(res => {
+return res.json()
+    })
+    .then(res => {
+console.log("returned higher level group",res)
+if(res.data.members.length>=8){
+  this.splitGroupMembers(res.data.members,'',res.data.allmembers)
+  this.deleteGroup(res.data._id,"higher")
+}
+    }).catch(err => {
+    console.log(err);
+    })
+
+    console.log("DELETING",this.state.id)
+    this.deleteGroup(this.state.id,"lower")
+
 
   }else{
 
     console.log("ids in else statement",newid,newgroupids)
      this.newHigherLevelGroup(this.state.centroid,newid,newgroupids)
-
+this.deleteGroup(this.state.id,"lower")
   }
 
 
   this.props.history.push('/groups');
-  this.deleteGroup()
+
     })()
 
 
@@ -635,10 +729,9 @@ var joinOrLeave=<><button onClick={(e)=>this.join(e)}>Join Group?</button></>
 
             <p>Group Title: <strong> {this.state.title}</strong></p>
             {this.state.members&&this.state.groupData&&<ExpertComponent groupId={this.props.match.params.groupId}
-            groupData={this.state.groupData}
-            members={this.state.members}
             updateLeaders={this.updateLeaders}
             grouptype={this.state.grouptype}
+            highorlow={this.state.highorlow}
             />}
           {joinOrLeave}
 

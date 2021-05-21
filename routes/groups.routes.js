@@ -15,11 +15,55 @@ const mongoose = require("mongoose");
 mongoose.set('useFindAndModify', false);
 
 
+router.put("/adddatatohigherlevelgroup/:groupId", (req, res, next) => {
+  let groupId = req.params.groupId;
+
+    HigherLevelGroup.findByIdAndUpdate(groupId, {$addToSet : {lowerGroupIds:{$each:[...req.body.newlowergroupids]}}}).exec()
+    HigherLevelGroup.findByIdAndUpdate(groupId, {$addToSet : {members:{$each:[...req.body.newgroupids]}}}).exec()
+    HigherLevelGroup.findByIdAndUpdate(groupId, {$addToSet : {allmembers:{$each:[...req.body.ids]}}}).exec()
+    HigherLevelGroup.findById(groupId).exec(function(err,docs){
+      if(err){
+              console.log(err);
+          }else{
+              res.status(200).json({
+                          data: docs
+                      })}})})
+
+                      router.put("/recallmemberfromhighergroup/:highergroupId/:memberid", (req, res, next) => {
+                          let highergroupId = req.params.highergroupId;
+                          let memberId = req.params.memberId;
+
+                           HigherLevelGroup.findByIdAndUpdate(highergroupId, {$pull : {members:memberId}}).exec()
+                           HigherLevelGroup.findById(groupId).exec(function(err,docs){
+                            if(err){
+                              console.log(err);
+                            }else{
+                              res.status(200).json({
+                                        data: docs
+                                      })}})})
+
+
+
+
+
+                      router.get("/gethigherlevelgroup", (req, res, next) => {
+                            const items=HigherLevelGroup.find({ }, {members: 1 })
+                            .exec(function(err,docs){
+                              if(err){
+                                      console.log(err);
+                                  }else{
+                                      res.status(200).json({
+                                                  data: docs
+                                              });
+                            }
+
+                        })})
+
+
 router.put("/joinhigherlevelgroup/:groupId/:userId", (req, res, next) => {
   let userId = req.params.userId;
   let groupId = req.params.groupId;
-  console.log(userId)
-  console.log(groupId)
+
       const updatedGroup=HigherLevelGroup.findByIdAndUpdate(groupId, {$addToSet : {
       members:userId
     }}).exec()
@@ -160,12 +204,18 @@ router.route('/addnomineetogroupobject/:nominee/:group').put((req, res) => {
 
 router.route('/resetleaderreview/:groupId').put((req, res) => {
   let groupId = req.params.groupId;
-console.log("timenow",req.body)
   const updatedGroup=Group.findByIdAndUpdate(groupId, {
-  lastcandidateshuffle:req.body
+  lastcandidateshuffle:req.body.lastcandidateshuffle,
+  randomsample:req.body.randomsample
 }).exec()
+})
 
-
+router.route('/resethigherlevelleaderreview/:groupId').put((req, res) => {
+  let groupId = req.params.groupId;
+  const updatedGroup=HigherLevelGroup.findByIdAndUpdate(groupId, {
+    lastcandidateshuffle:req.body.lastcandidateshuffle,
+    randomsample:req.body.randomsample
+}).exec()
 })
 
 router.route('/resetcandidatesaftershuffle/:groupId').put((req, res) => {
@@ -315,7 +365,7 @@ return log('Email sent!!!');
 
 
 router.get("/findgroupscoordinates", (req, res, next) => {
-      const items=Group.find({ }, { _id: 1, centroid: 1 })
+      const items=LocalGroup.find({ }, { _id: 1, centroid: 1 })
       .exec(function(err,docs){
         if(err){
                 console.log(err);
@@ -330,22 +380,11 @@ router.get("/findgroupscoordinates", (req, res, next) => {
   router.put("/joinlocalgroup/:groupId/:userId", (req, res, next) => {
     let userId = req.params.userId;
     let groupId = req.params.groupId;
-
+console.log("adding member to localgroup", groupId,userId)
         const updatedGroup=LocalGroup.findByIdAndUpdate(groupId, {$addToSet : {
         members:userId
       }}).exec()
 
-  User.findByIdAndUpdate(
-    { _id: userId },
-    { localgroup: groupId },
-    function(err, result) {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(result);
-      }
-    }
-  );
 
 
       })
@@ -381,7 +420,7 @@ router.get("/findgroupscoordinates", (req, res, next) => {
 
 router.post("/createlocalgroup", (req, res, next) => {
 
-   let newGroup = new Group({
+   let newGroup = new LocalGroup({
      _id: new mongoose.Types.ObjectId(),
      location:req.body['location'],
      centroid: req.body["centroid"],
@@ -479,6 +518,25 @@ console.log("populating members")
         }
     })})
 
+    router.get("/populatehighergroupmembers/:groupId", (req, res, next) => {
+      let groupId = req.params.groupId;
+  console.log("populating members")
+          const items=HigherLevelGroup.find({_id:groupId})
+          .populate('members')
+          .populate('rules')
+          .populate('higherlevelgroup')
+          .populate('leaders')
+          .populate('expertcandidates')
+          .exec(function(err,docs){
+            if(err){
+                    console.log(err);
+                }else{
+                  console.log("docs",docs)
+                    res.status(200).json({
+                                data: docs
+                            });
+          }
+      })})
 
 
         router.put("/changelocalgroupsofmembers/:groupid/:memberid", (req, res, next) => {
@@ -524,6 +582,7 @@ console.log("populating members")
             .populate('members')
             .populate('rules')
             .populate('leaders')
+            .populate('higherlevelgroup')
             .populate('expertcandidates')
             .exec(function(err,docs){
               if(err){
@@ -644,21 +703,43 @@ console.log("populating members")
 
 
 
-   router.route('/deletegroup/:id').delete((req, res) => {
-     let groupid = req.params.id
-
-    Group.findByIdAndDelete(groupid, function (err, docs) {
-    if (err){
-        console.log(err)
-    }
-    else{
-        console.log("Deleted : ", docs);
-    }
-});
 
 
-   })
+         router.route('/deletelowergroup/:id').delete((req, res) => {
+           let groupid = req.params.id
 
+      console.log("deleting lower group!!!!!!!!!!!!!",groupid)
+          LocalGroup.findByIdAndDelete(groupid, function(err,docs){
+            if(err){
+                    console.log(err);
+                }else{
+
+                    res.status(200).json({
+                                data: docs
+                            })
+          }
+           })
+
+
+         })
+
+         router.route('/deletehighergroup/:id').delete((req, res) => {
+           let groupid = req.params.id
+           console.log("deleting higher group!!!!!!!!!!!!!",groupid)
+
+          HigherLevelGroup.findByIdAndDelete(groupid, function(err,docs){
+            if(err){
+                    console.log(err);
+                }else{
+
+                    res.status(200).json({
+                                data: docs
+                            })
+          }
+           })
+
+
+         })
 
 
 

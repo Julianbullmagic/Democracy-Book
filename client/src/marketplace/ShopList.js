@@ -3,41 +3,41 @@ import {Link} from "react-router-dom";
 
 import auth from './../auth/auth-helper'
 
-class ItemList extends Component {
+class ShopList extends Component {
 
 
   constructor(props) {
          super(props);
          this.state = {
-           items: [...props.items],
-           imageIndex:0
+           shops: [...props.shops],
          }
-     }
+   }
+
+
 
 
 
 
   render() {
-    console.log("items")
-console.log(this.state.items)
+    console.log("shops")
+console.log(this.state.shops)
     return (
       <React.Fragment>
         <header>
-          <h1>Items</h1>
+          <h1>Shops</h1>
         </header>
         <section>
           <div >
-            {this.state.items&&this.state.items.map(item => {
+            {this.state.shops&&this.state.shops.map(item => {
 
 
               return(
                 <>
                 <div key={item._id}>
-          <Link exact to={"singlemarketplaceitem/" + item._id}>
+          <Link exact to={"singlemarketplaceshop/" + item._id}>
                     <div>
                      <h3>{item.title}</h3>
                     <p>{item.description}</p>
-                    <p>{item.priceorrate}</p>
 
                     </div></Link>
                 </div>
@@ -52,4 +52,4 @@ console.log(this.state.items)
   }
 }
 
-export default ItemList;
+export default ShopList;

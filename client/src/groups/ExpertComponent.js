@@ -7,19 +7,23 @@ const mongoose = require("mongoose");
 
 export default function ExpertComponent(props) {
 
-const [candidates, setCandidates] = useState([]);
-const [leaders, setLeaders] = useState([]);
-const [groupData, setGroupData] = useState(props.groupData);
+const [loading, setLoading] = useState(false);
+const [groupData, setGroupData] = useState({
+  _id:'',
+centroid:[],
+randomsample:[],
+leaders:[],
+lastcandidateshuffle:'',
+rules:[],
+members:[],
+expertcandidates:[],
+location:"",
+radius:""
+});
 const [toggleNominations, setToggleNominations] = useState(false);
 const [toggleViewCandidates, setToggleViewCandidates] = useState(false);
-const [members,setMembers]=useState([...props.members])
+const [members,setMembers]=useState()
 const [groupId,setGroupId]=useState(props.groupId)
-
-
-
-
-
-
 
 
 
@@ -29,28 +33,17 @@ fetchGroupData()
 
 
 useEffect(() => {
-checkWinner()
-checkLastCandidateShuffle()
-},[candidates])
-
-useEffect(() => {
-updateLeaders()
-props.updateLeaders(leaders)
-},[leaders])
+  checkWinner()
+  updateLeaders()
+  props.updateLeaders(groupData.leaders)
+},[groupData,setGroupData])
 
 
 
-useEffect(() => {
-
-  checkLastCandidateShuffle()
-
-},[groupData])
+async function updateLeaders(){
 
 
-
-function updateLeaders(){
-  console.log("leaders in update leaders",leaders)
-var leaderids=leaders.map(item=>{return item._id})
+var leaderids=groupData.leaders.map(item=>{return item._id})
 console.log("leader ids",leaderids)
    const options = {
      method: 'put',
@@ -60,17 +53,81 @@ console.log("leader ids",leaderids)
         body: JSON.stringify(leaderids)
    }
 
-   fetch("/"+props.grouptype+"/updateleaders/"+groupId, options
+  await fetch("/"+props.grouptype+"/updateleaders/"+groupId, options
   ).then(res => {
   console.log(res);
   }).catch(err => {
   console.log(err);
   })
+//
+//   if (groupData.higherlevelgroup){
+//
+// var leadermembers=[]
+// for (var member of members){
+//   if(leaderids.includes(member._id)){
+//     leadermembers.push(member)
+//   }
+// }
+// var leadermemberids=leadermembers.map(item=>{return item._id})
+// var memberids=members.map(item=>{return item._id})
+// var higherlevelmembers=JSON.parse(JSON.stringify(groupData.higherlevelgroup.members))
+// var higherlevelmemberids=higherlevelmembers.map(item=>{return item._id})
+//
+// for (var representative of representativeids){
+//   if(!higherlevelmemberids.includes(representative)){
+// addRepresentativeToHigherLevel(representative)
+//   }
+// }
+//
+// for(var member of memberids){
+//   if (higherlevelmemberids.includes(member)&&!representativeids.includes(member)){
+//     recallRepresentativeFromHigherLevel(member)
+//   }
+// }
+//
+//
+//
+//
+//   }
+
+}
+
+function addRepresentativeToHigherLevel(representative){
+  const options = {
+    method: 'put',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+       body:''
+  }
+
+fetch("/"+props.grouptype+"/addrepresentativetohighergroup/"+groupData.higherlevelgroup._id+"/"+representative, options
+ ).then(res => {
+ console.log(res);
+ }).catch(err => {
+ console.log(err);
+ })
+}
+
+function recallRepresentativeFromHigherLevel(representative){
+  const options = {
+    method: 'put',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+       body:''
+  }
+
+ fetch("/"+props.grouptype+"/recallmemberfromhighergroup/"+groupData.higherlevelgroup._id+"/"+representative, options
+ ).then(res => {
+ console.log(res);
+ }).catch(err => {
+ console.log(err);
+ })
 }
 
 
 function toggleNominationsFunction(){
-  setMembers([...props.members])
   setToggleNominations(!toggleNominations)
 }
 
@@ -83,21 +140,21 @@ function toggleViewCandidatesFunction(){
 
 
 function checkWinner(){
-if (candidates.length>0){
-var expertcandidatescopy=JSON.parse(JSON.stringify(candidates))
+if (groupData.expertcandidates.length>0){
+var expertcandidatescopy=JSON.parse(JSON.stringify(groupData.expertcandidates))
 
 
 
 var sortedcandidates=expertcandidatescopy.sort((a, b) => (a.votes.length < b.votes.length) ? 1 : -1)
 var sortedcandidatestop4=sortedcandidates.slice(0,2)
 console.log("sortedcandidatestop4",sortedcandidatestop4)
-setLeaders(sortedcandidatestop4)
+setGroupData({...groupData,leaders:sortedcandidatestop4})
 }
 }
 
 function shuffleCandidates(){
 
-  var expertcandidatescopy=JSON.parse(JSON.stringify(candidates))
+  var expertcandidatescopy=JSON.parse(JSON.stringify(groupData.expertcandidates))
   shuffle(expertcandidatescopy)
 return expertcandidatescopy
 
@@ -126,21 +183,62 @@ function shuffle(array) {
 }
 
 
-function checkLastCandidateShuffle(){
+function checkLastCandidateShuffle(group){
 
   var timenow=new Date().setHours(0,0,0,0)
 
+console.log("last candidate shuffle",group)
 
+//2592000000
+if(((timenow-group.lastcandidateshuffle)>10000)&&group.expertcandidates.length>1){
 
-
-if(((timenow-groupData.lastcandidateshuffle)>86400000)&&candidates.length>1){
+var data
+console.log("all members",group.allmembers)
+if(group.allmembers){
+  var allmemberscopy=[...group.allmembers]
+  shuffle(allmemberscopy)
+  console.log("SHUFFLED ALL MEMBERS",allmemberscopy)
+  data={
+    lastcandidateshuffle:timenow,
+    randomsample:allmemberscopy
+  }
+  console.log("DATA",data)
 
   const options = {
     method: 'put',
     headers: {
       'Content-Type': 'application/json'
     },
-       body: JSON.stringify(timenow)
+       body: JSON.stringify(data)
+  }
+
+  fetch("/"+props.grouptype+"/resethigherlevelleaderreview/"+groupId, options
+ ).then(res => {
+ console.log(res);
+ }).catch(err => {
+ console.log(err);
+ })
+
+ }
+
+
+ console.log("members",group.members)
+  var memberscopy=[...group.members]
+  var memberids=memberscopy.map(item=> item._id)
+  shuffle(memberids)
+  console.log("SHUFFLED MEMBERS",memberids)
+  data={
+    lastcandidateshuffle:timenow,
+    randomsample:memberids
+  }
+  console.log("DATA",data)
+
+  const options = {
+    method: 'put',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+       body: JSON.stringify(data)
   }
 
   fetch("/"+props.grouptype+"/resetleaderreview/"+groupId, options
@@ -149,6 +247,16 @@ if(((timenow-groupData.lastcandidateshuffle)>86400000)&&candidates.length>1){
  }).catch(err => {
  console.log(err);
  })
+
+
+
+
+
+
+
+
+
+
 
 var expertcandidates=shuffleCandidates()
 var candidateids=expertcandidates.map(item=>{return item._id})
@@ -175,30 +283,56 @@ console.log(err);
 
 
 function fetchGroupData(){
-console.log("fetching group data",groupData)
-fetch("/"+props.grouptype+"/populatemembersbelow/"+props.groupId)
-.then(result => {return result.json()})
-.then(response =>{
-    console.log("response.data",response['data'])
-    setGroupData(response['data'][0])
-    if(response['data'][0]['expertcandidates']){
-      console.log("setting candidates")
-    setCandidates(response['data'][0]['expertcandidates'])}
-    if(response['data'][0]['leaders']){
-    console.log("response.data.leaders",response['data'][0]['leaders'])
-    setLeaders(response['data'][0]['leaders'])}
 
-var groupDataCopy=JSON.parse(JSON.stringify(response["data"][0]))
-var currenttime=new Date().getTime()
-for (const candidate of groupDataCopy.expertcandidates){
-  const diff=currenttime-candidate.timecreated
-if(diff>86400000&&candidate.votes.length<2){
-removeCandidate(candidate._id,groupId)
+console.log("props",props.highorlow)
+if(props.highorlow=="higher"){
+  fetch("/"+props.grouptype+"/populatehigherlevelmembersbelow/"+props.groupId)
+  .then(result => {return result.json()})
+  .then(response =>{
+      console.log("response.data higher",response['data'])
+      setGroupData(response['data'][0])
+setLoading(true)
+
+  var groupDataCopy=JSON.parse(JSON.stringify(response["data"][0]))
+  var currenttime=new Date().getTime()
+  for (const candidate of groupDataCopy.expertcandidates){
+    const diff=currenttime-candidate.timecreated
+  if(diff>86400000&&candidate.votes.length<2){
+  removeCandidate(candidate._id,groupId)
+  }
+  }
+
+
+  })
 }
+
+if(props.highorlow=="lower"){
+
+  console.log("fetching lower")
+  fetch("/"+props.grouptype+"/populatemembersbelow/"+props.groupId)
+  .then(result => result.json())
+  .then(response =>{
+      console.log("response.data lower",response['data'])
+      setGroupData(response['data'][0])
+setLoading(true)
+checkLastCandidateShuffle(response['data'][0])
+
+  var groupDataCopy=JSON.parse(JSON.stringify(response["data"][0]))
+  var currenttime=new Date().getTime()
+  for (const candidate of groupDataCopy.expertcandidates){
+    const diff=currenttime-candidate.timecreated
+  if(diff>86400000&&candidate.votes.length<2){
+  removeCandidate(candidate._id,groupId)
+  }
+  }
+
+
+  })
 }
 
 
-})}
+
+}
 
 
 
@@ -209,7 +343,7 @@ removeCandidate(candidate._id,groupId)
 
 var userId=auth.isAuthenticated().user._id
 
-var candidatesCopy=JSON.parse(JSON.stringify(candidates))
+var candidatesCopy=JSON.parse(JSON.stringify(groupData.expertcandidates))
 
         for (const candidate of candidatesCopy) {
 
@@ -219,12 +353,12 @@ var candidatesCopy=JSON.parse(JSON.stringify(candidates))
           if(!included){
             candidate.votes.push(auth.isAuthenticated().user._id)
 
-            setCandidates({...candidates,candidatesCopy})
+            setGroupData({...groupData,expertcandidates:candidatesCopy})
 
           }
         }
       }
-      setCandidates(candidatesCopy)
+      setGroupData({...groupData,expertcandidates:candidatesCopy})
 
 
         }
@@ -257,7 +391,7 @@ function disapprove(e,candidateId){
 
 var userId=auth.isAuthenticated().user._id
 
-var candidatesCopy=JSON.parse(JSON.stringify(candidates))
+var candidatesCopy=JSON.parse(JSON.stringify(groupData.expertcandidates))
 
 
   for (const candidate of candidatesCopy) {
@@ -280,7 +414,7 @@ var candidatesCopy=JSON.parse(JSON.stringify(candidates))
     }
   }
   }
-  setCandidates(candidatesCopy)
+  setGroupData({...groupData,expertcandidates:candidatesCopy})
 
   }
 
@@ -325,15 +459,15 @@ console.log("nominee id",nomineeId)
   }
 console.log("new candidate",newCandidate)
 
-  var justnames=candidates.map(item=>{return item.name})
-console.log("candidates",candidates,justnames,groupData,newCandidate)
+  var justnames=groupData.expertcandidates.map(item=>{return item.name})
+console.log("candidates",groupData.expertcandidates,justnames,groupData,newCandidate)
 
 if(!justnames.includes(newCandidate.name)){
 
 
-  var candidatesCopy=JSON.parse(JSON.stringify(candidates))
+  var candidatesCopy=JSON.parse(JSON.stringify(groupData.expertcandidates))
   candidatesCopy.push(newCandidate)
-  setCandidates(candidatesCopy)
+  setGroupData({...groupData,expertcandidates:candidatesCopy})
 
 
 
@@ -433,11 +567,10 @@ console.log(err);
 
 
 
-console.log("leaders",leaders)
 var leadersmapped= <h3>No Experts Yet, nominate some candidates</h3>
 
-if(leaders){
-leadersmapped=leaders.map(item=>{
+if(groupData.leaders){
+leadersmapped=groupData.leaders.map(item=>{
 
 
 
@@ -452,8 +585,8 @@ leadersmapped=leaders.map(item=>{
 
 
 var candidatesmapped=<h3>No Candidates</h3>
-if(candidates){
-candidatesmapped=candidates.map(item => {
+if(groupData.expertcandidates){
+candidatesmapped=groupData.expertcandidates.map(item => {
 
   let votes=[]
   let approval=<h5></h5>
@@ -485,10 +618,10 @@ candidatesmapped=candidates.map(item => {
 
 var membersmapped=<h3>No Members</h3>
 
- if(members){
+ if(groupData.members){
 
 
- membersmapped=members.map(item => {
+ membersmapped=groupData.members.map(item => {
    return(
      <>
      <h3>{item.name}</h3>
@@ -501,34 +634,36 @@ var membersmapped=<h3>No Members</h3>
 }
 
 
-console.log("leaders below",leaders)
+console.log("groupData",groupData)
 
   return (
     <section>
-    <h1>Expert Advisers/Leaders</h1>
-{leadersmapped}
-    <h2>Candidates</h2>
-    <button onClick={(e)=>toggleViewCandidatesFunction(e)}>See nominated candidates</button>
-{toggleViewCandidates&&candidatesmapped}
-    <h2>Nominate a group member as a candidate</h2>
+    {loading&&<><h1>Expert Advisers/Leaders</h1>
+  {leadersmapped}
+      <h2>Candidates</h2>
+      <button onClick={(e)=>toggleViewCandidatesFunction(e)}>See nominated candidates</button>
+  {toggleViewCandidates&&candidatesmapped}
+      <h2>Nominate a group member as a candidate</h2>
 
-<button onClick={(e)=>toggleNominationsFunction(e)}>Nominate a member for leadership</button>
+  <button onClick={(e)=>toggleNominationsFunction(e)}>Nominate a member for leadership</button>
 
-  {toggleNominations&&<h3>There are no particular election events on Democracy Book. Members can nominate and/or vote for any other
-  member at any time. If one member becomes more popular than another they can become leader at any time.The
-  elected leaders are servants of the people they represent, if they do not lead the group in a direction that
-  is in the best interests of the group, the group can take away authority at any time. Every day, the list of
-  nominated candidates is shuffled and then sorted in order from highest to lowest number of votes
-  candidates with equal numbers of votes will be ordered randomly. This may mean that if many people have equal numbers
-  of votes, each time they refresh the page, they may or may not be a leader. All of this is designed to make leaders feel
-  as insecure as possible, to force them to consult with and make the people they represent feel as comfortable as possible
-  with them being in charge. You must earn people's respect, you are not entitled to it. Power, in the sense of being able to
-  impose your will onto others, is never legitimate. Authority should be grounded in knowledge, wisdom and moral integrity,
-  not coercive force. Also, being removed from leadership does not necessarily reflect poorly on you as a person or your
-  overall character, your life circumstances may restrit your ability to perform the job effectively. It may not be your
-  fault, but the group still needs to have the most capable leaders. We think you are smart enough to understand the common
-  sense idea that experts often have valuable advice for us that we should take voluntarily. </h3>}
-    {toggleNominations&&membersmapped}
+    {toggleNominations&&<h3>There are no particular election events on Democracy Book. Members can nominate and/or vote for any other
+    member at any time. If one member becomes more popular than another they can become leader at any time.The
+    elected leaders are servants of the people they represent, if they do not lead the group in a direction that
+    is in the best interests of the group, the group can take away authority at any time. Every day, the list of
+    nominated candidates is shuffled and then sorted in order from highest to lowest number of votes
+    candidates with equal numbers of votes will be ordered randomly. This may mean that if many people have equal numbers
+    of votes, each time they refresh the page, they may or may not be a leader. All of this is designed to make leaders feel
+    as insecure as possible, to force them to consult with and make the people they represent feel as comfortable as possible
+    with them being in charge. You must earn people's respect, you are not entitled to it. Power, in the sense of being able to
+    impose your will onto others, is never legitimate. Authority should be grounded in knowledge, wisdom and moral integrity,
+    not coercive force. Also, being removed from leadership does not necessarily reflect poorly on you as a person or your
+    overall character, your life circumstances may restrit your ability to perform the job effectively. It may not be your
+    fault, but the group still needs to have the most capable leaders. We think you are smart enough to understand the common
+    sense idea that experts often have valuable advice for us that we should take voluntarily. </h3>}
+      {toggleNominations&&membersmapped}</>
+    }
+
 
     </section>
   )}

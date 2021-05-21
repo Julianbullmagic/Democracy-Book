@@ -71,7 +71,7 @@ const listNewsFeed = async (req, res) => {
 
   let following = req.profile.following
   following.push(req.profile._id)
-  if(req.params.groupId!=="undefined"){
+  if(req.params.groupId){
     try{
       let posts = await Post.find({group:req.params.groupId})
                             .populate('comments.postedBy', '_id name')
@@ -81,13 +81,14 @@ const listNewsFeed = async (req, res) => {
                             .exec()
       res.json(posts)
     }catch(err){
+      console.log("ERROR IN LISTNEWSFEED",err)
       return res.status(400).json({
         error: errorHandler.getErrorMessage(err)
       })
     }
   }else{
     try{
-      let posts = await Post.find({ $not: { group } } )
+      let posts = await Post.find({ group : { $exists : false } } )
                             .populate('comments.postedBy', '_id name')
                             .populate('postedBy', '_id name')
                             .sort('-created')
@@ -95,6 +96,8 @@ const listNewsFeed = async (req, res) => {
                             .exec()
       res.json(posts)
     }catch(err){
+      console.log("ERROR IN LISTNEWSFEED",err)
+
       return res.status(400).json({
         error: errorHandler.getErrorMessage(err)
       })

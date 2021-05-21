@@ -65,7 +65,8 @@ export default function Home({history}){
             <Grid item xs={12}>
               <Card className={classes.card}>
                 <Typography variant="h6" className={classes.title}>
-                  Home Page
+                  The strong take what they can while the weak suffer what they must?
+                  &^%# no, try Democracy Book instead.
                 </Typography>
                 <CardMedia className={classes.media} image={unicornbikeImg} title="Unicorn Bicycle"/>
                 <Typography variant="body2" component="p" className={classes.credit} color="textSecondary">Photo by <a href="https://unsplash.com/@boudewijn_huysmans" target="_blank" rel="noopener noreferrer">Boudewijn Huysmans</a> on Unsplash</Typography>

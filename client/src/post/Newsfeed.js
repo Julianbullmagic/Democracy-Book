@@ -33,7 +33,7 @@ export default function Newsfeed (props) {
     const abortController = new AbortController()
     const signal = abortController.signal
     console.log("groupId",props.groupId)
-    if(props.groupId){
+    if(props.groupId&&jwt.user._id){
     listNewsFeed({
       userId: jwt.user._id,
       groupId:props.groupId
@@ -56,7 +56,7 @@ export default function Newsfeed (props) {
         t: jwt.token
       }, signal).then((data) => {
         if (data.error) {
-          console.log(data.error)
+          console.log("data",data,data.error)
         } else {
           setPosts(data)
         }
