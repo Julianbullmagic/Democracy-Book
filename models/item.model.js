@@ -14,11 +14,9 @@ const itemSchema = mongoose.Schema({
   priceorrate: {
     type: String,
   },
-  cooperative:{type:mongoose.Schema.Types.ObjectId,ref:"Shop"},
-  createdby:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
-  labourtime: {
-    type: String,
-  }
+  images:[{type:String}],
+  groupId:{type:mongoose.Schema.Types.ObjectId,ref:"Group"},
+  createdby:{type:mongoose.Schema.Types.ObjectId,ref:"User"}
 
 })
 

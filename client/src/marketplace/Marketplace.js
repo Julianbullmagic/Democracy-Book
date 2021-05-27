@@ -27,11 +27,14 @@ export default function Marketplace (){
 
    useEffect(() => {
 
+
+
      fetch("/marketplace/items").then(res => {
         return res.json();
       }).then(blob => {
         console.log("data",blob.data)
-        setItems([blob.data])
+        if(blob.data){setItems([...blob.data])}
+
       })
 
 
@@ -40,7 +43,7 @@ export default function Marketplace (){
       }).then(blob => {
         console.log("data",blob.data)
 
-        setShops([blob.data])
+        setShops([...blob.data])
       })
 
    }, [])
@@ -50,13 +53,19 @@ export default function Marketplace (){
 
 
 
+
    function handleSubmit(e) {
+     e.preventDefault()
+
+     if(searchValue.current.value){
    if(shopOrItemValue.current.value=="item"){
 
               fetch("/marketplace/getitems/"+searchValue.current.value)
                       .then(response => response.json()).then(blob =>
                         {
-                          this.setState({items: blob.data})
+                          console.log("shopdata",blob.data)
+
+                          setItems([...blob.data])
                         })
               }
 
@@ -64,10 +73,28 @@ export default function Marketplace (){
               fetch("/marketplace/getshops/"+searchValue.current.value)
                       .then(response => response.json()).then(blob => {
                         console.log("shopdata",blob.data)
-                        this.setState({shops: blob.data})
+                        setShops([...blob.data])
                       })
      }
+   }else{
+
+          fetch("/marketplace/items").then(res => {
+             return res.json();
+           }).then(blob => {
+             console.log("data",blob.data)
+             setItems([...blob.data])
+           })
+
+
+           fetch("/marketplace/shops").then(res => {
+             return res.json();
+           }).then(blob => {
+             console.log("data",blob.data)
+
+             setShops([...blob.data])
+           })
    }
+ }
 
 
 
@@ -105,9 +132,7 @@ export default function Marketplace (){
         The national accounts of all countries that gather the necessary data show a strong correlation between human labour time and value, roughly 95%. You can check
         this yourself on the Australian Bureau of Statistics Website.
 
-        </h6>
-<a href="https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables">https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-input-output-tables</a>
-      <h6>  </h6></>  }
+        </h6></>  }
         <br/>
         <br/>
         <button  onClick={()=>{setViewForm(!viewForm)}}>Create Listing?</button>

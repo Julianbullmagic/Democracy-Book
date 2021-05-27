@@ -12,11 +12,17 @@ const groupsRoutes = require( './routes/groups.routes')
 const rulesRoutes = require( './routes/rules.routes')
 const localGroupRoutes = require( './routes/localgroup.routes')
 const marketplaceRoutes = require( './routes/marketplace.routes')
+const fileUpload = require('express-fileupload');
+const multer=require('multer')
+
+
+
 
 //comment out before building for production
 const PORT = process.env.PORT || 5000
 
 const app = express();
+app.use(fileUpload());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

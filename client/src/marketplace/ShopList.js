@@ -9,17 +9,18 @@ class ShopList extends Component {
   constructor(props) {
          super(props);
          this.state = {
-           shops: [...props.shops],
+           shops: props.shops,
          }
+
    }
 
+   componentWillReceiveProps(nextProps) {
+     this.setState({ shops: nextProps.shops });  
+   }
 
+  render(props) {
+    console.log("shops in render")
 
-
-
-
-  render() {
-    console.log("shops")
 console.log(this.state.shops)
     return (
       <React.Fragment>
