@@ -13,6 +13,7 @@ import SingleMarketPlaceItem from './marketplace/SingleMarketplaceItem'
 import SingleMarketPlaceShop from './marketplace/SingleMarketplaceShop'
 import SingleGroupPage from './groups/SingleGroupPage'
 import Menu from './core/Menu'
+import ChatPage from "./ChatPage/ChatPage"
 
 
 const MainRouter = () => {
@@ -31,6 +32,8 @@ const MainRouter = () => {
         <Route exact path="/user/:userId" component={Profile}/>
         <Route exact path="/groups/:groupId/:grouptype/:higherlower"    component={SingleGroupPage}/>
       </Switch>
+      {localStorage.getItem('jwt') !== null &&   <ChatPage/>}
+
     </div>)
 }
 

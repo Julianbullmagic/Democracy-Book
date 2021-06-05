@@ -43,7 +43,23 @@ const userSchema = new mongoose.Schema({
     contentType: String
   },
   following: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
-  followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}]
+  followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
+
+  lastname: {
+      type:String,
+      maxlength: 50
+  },
+  role : {
+      type:Number,
+      default: 0
+  },
+  image: String,
+  token : {
+      type: String,
+  },
+  tokenExp :{
+      type: Number
+  }
 })
 
 userSchema

@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import ChatPage from "./../ChatPage/ChatPage"
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
@@ -12,37 +13,8 @@ import Newsfeed from './../post/Newsfeed'
 const KmeansLib = require('kmeans-same-size');
 
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-    margin: 30,
-  },
-  card: {
-    maxWidth: 1000,
-    margin: 'auto',
-    marginTop: theme.spacing(5),
-    marginBottom: theme.spacing(5)
-  },
-  title: {
-    padding:`${theme.spacing(3)}px ${theme.spacing(2.5)}px ${theme.spacing(2)}px`,
-    color: theme.palette.text.secondary
-  },
-  media: {
-    minHeight: 400
-  },
-  credit: {
-    padding: 10,
-    textAlign: 'right',
-    backgroundColor: '#ededed',
-    borderBottom: '1px solid #d0d0d0',
-    '& a':{
-      color: '#3f4771'
-    }
-  }
-}))
 
 export default function Home({history}){
-  const classes = useStyles()
   const [defaultPage, setDefaultPage] = useState(false)
 
 
@@ -57,19 +29,19 @@ export default function Home({history}){
   }, [])
 
     return (
-      <div className={classes.root}>
+      <>
 
         { !defaultPage &&
           <Grid container spacing={8}>
 
             <Grid item xs={12}>
-              <Card className={classes.card}>
-                <Typography variant="h6" className={classes.title}>
+              <Card className="card">
+                <Typography variant="h6" className="title">
                   The strong take what they can while the weak suffer what they must?
                   &^%# no, try Democracy Book instead.
                 </Typography>
-                <CardMedia className={classes.media} image={unicornbikeImg} title="Unicorn Bicycle"/>
-                <Typography variant="body2" component="p" className={classes.credit} color="textSecondary">Photo by <a href="https://unsplash.com/@boudewijn_huysmans" target="_blank" rel="noopener noreferrer">Boudewijn Huysmans</a> on Unsplash</Typography>
+                <CardMedia className="media" image={unicornbikeImg} title="Unicorn Bicycle"/>
+                <Typography variant="body2" component="p" className="credit" color="textSecondary">Photo by <a href="https://unsplash.com/@boudewijn_huysmans" target="_blank" rel="noopener noreferrer">Boudewijn Huysmans</a> on Unsplash</Typography>
                 <CardContent>
                   <Typography type="body1" component="p">
                     Welcome
@@ -81,6 +53,7 @@ export default function Home({history}){
           </Grid>
         }
         {defaultPage &&
+          <>
           <Grid container spacing={8}>
 
 
@@ -92,7 +65,9 @@ export default function Home({history}){
               <FindPeople/>
             </Grid>
           </Grid>
+          <ChatPage/>
+          </>
         }
-      </div>
+      </>
     )
 }

@@ -14,7 +14,10 @@ const localGroupRoutes = require( './routes/localgroup.routes')
 const marketplaceRoutes = require( './routes/marketplace.routes')
 const fileUpload = require('express-fileupload');
 const multer=require('multer')
-
+const { Chat } = require("./models/Chat");
+const { auth } = require("./middleware/auth");
+const cookieParser = require("cookie-parser");
+const fs = require("fs");
 
 
 
@@ -22,11 +25,25 @@ const multer=require('multer')
 const PORT = process.env.PORT || 5000
 
 const app = express();
+const server = require("http").createServer(app);
+
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+
+
+
 app.use(fileUpload());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors())
+app.use(cookieParser());
+
 app.use(function(req,res,next){
   res.header("Access-Control-Allow-Origin","*")
   res.header("Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type,Accept")
@@ -48,6 +65,77 @@ app.use('/groups', groupsRoutes)
 app.use('/rules', rulesRoutes)
 app.use('/marketplace', marketplaceRoutes)
 app.use('/localgroup',localGroupRoutes)
+app.use('/api/users', require('./routes/users'));
+app.use('/api/chat', require('./routes/chat'));
+
+
+
+
+
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}_${file.originalname}`)
+  },
+  // fileFilter: (req, file, cb) => {
+  //   const ext = path.extname(file.originalname)
+  //   if (ext !== '.jpg' && ext !== '.png' && ext !== '.mp4') {
+  //     return cb(res.status(400).end('only jpg, png, mp4 is allowed'), false);
+  //   }
+  //   cb(null, true)
+  // }
+})
+
+var upload = multer({ storage: storage }).single("file")
+
+app.post("/api/chat/uploadfiles", auth ,(req, res) => {
+  upload(req, res, err => {
+    if(err) {
+      return res.json({ success: false, err })
+    }
+    return res.json({ success: true, url: res.req.file.path });
+  })
+});
+
+io.on("connection", socket => {
+
+  socket.on("Input Chat Message", msg => {
+
+    connect.then(db => {
+      try {
+        console.log("message",msg)
+          let chat = new Chat({ message: msg.chatMessage, sender:msg.userId, type: msg.type })
+console.log("chat",chat)
+          chat.save((err, doc) => {
+            console.log("error",err)
+            console.log(doc)
+            if(err) return res.json({ success: false, err })
+
+            Chat.find({ "_id": doc._id })
+            .populate("sender")
+            .exec((err, doc)=> {
+
+                return io.emit("Output Chat Message", doc);
+            })
+          })
+      } catch (error) {
+        console.error(error);
+      }
+    })
+   })
+
+})
+
+
+//use this to show the image you have in node js server to client (react js)
+//https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
+app.use('/uploads', express.static('uploads'));
+
+
+
 
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'))
@@ -57,6 +145,11 @@ if(process.env.NODE_ENV === 'production') {
     })
 }
 
-app.listen(PORT, () => console.log(`server is up at ${PORT}`));
 
 module.exports = app
+
+
+
+server.listen(PORT, () => {
+  console.log(`Server Running at ${PORT}`)
+});

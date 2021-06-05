@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import './App.css';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
-class App extends Component {
-  render() {
-    return (
-      <MuiThemeProvider>
-      <div className="App">
-      Hello world
-      </div>
-      </MuiThemeProvider>
-    );
-  }
-}
+import React from 'react'
+import MainRouter from './MainRouter'
+import {BrowserRouter} from 'react-router-dom'
+import { ThemeProvider } from '@material-ui/styles'
+import { hot } from 'react-hot-loader'
+import './App.css'
 
-export default App;
+const App = () => {
+
+  return (
+  <BrowserRouter >
+        <MainRouter/>
+  </BrowserRouter>
+)}
+
+export default hot(module)(App)

@@ -16,6 +16,7 @@ const groupSchema = mongoose.Schema({
   location: {
     type: String,
   },
+  chat: [{type:mongoose.Schema.Types.ObjectId,ref:"Chat"}],
   centroid:[Number],
   higherlevelgroup:{type:mongoose.Schema.Types.ObjectId,ref:"HigherLevelGroup"},
   radius:Number,
